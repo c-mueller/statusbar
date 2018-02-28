@@ -14,31 +14,38 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package braillechart
 
-import "time"
-
-var DefaultConfiguration = CPULoadConfiguration{
-	UpdateInterval:   1,
-	ShowAverageLoad:  true,
-	LoadAverageCount: 120,
+type BrailleCharacter struct {
+	Dots []bool
 }
 
-type CPUComponentBuilder struct{}
-
-type CPULoadComponent struct {
-	Config          *CPULoadConfiguration
-	id              string
-	cpuUpdateTicker *time.Ticker
-	cpuLoads        []float64
-	currentValue    string
-	updateTimestamp time.Time
-	recentAverages  []float64
-	currentAverage  float64
+func NewBrailleChar(i uint8) *BrailleCharacter {
+	dotValues := make([]bool, 8)
+	for k := range dotValues {
+		v := (i >> uint(k)) & 0x1
+		boolv := false
+		if v == 1 {
+			boolv = true
+		}
+		dotValues[k] = boolv
+	}
+	return &BrailleCharacter{
+		Dots: dotValues,
+	}
 }
 
-type CPULoadConfiguration struct {
-	UpdateInterval   int  `yaml:"update_interval" mapstructure:"update_interval"`
-	ShowAverageLoad  bool `yaml:"show_average_load" mapstructure:"show_average_load"`
-	LoadAverageCount int  `yaml:"load_average_count" mapstructure:"load_average_count"`
+func (c BrailleCharacter) MapToBrailleChar() (rune, error) {
+	if len(c.Dots) != 8 {
+		return 0, InvalidDotLength
+	}
+	value := uint(0)
+	for k, v := range c.Dots {
+		i := uint(0)
+		if v {
+			i = 1
+		}
+		value = value | (i << uint(k))
+	}
+	return rune(0x2800 | (value & 0xFF)), nil
 }

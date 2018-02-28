@@ -14,31 +14,19 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package bi
 
 import "time"
 
-var DefaultConfiguration = CPULoadConfiguration{
-	UpdateInterval:   1,
-	ShowAverageLoad:  true,
-	LoadAverageCount: 120,
+type BarComponent interface {
+	GetIdentifier() string
+	Init() error
+	Render() (string, error)
+	IsLatest(date time.Time) bool
+	Stop() error
 }
 
-type CPUComponentBuilder struct{}
-
-type CPULoadComponent struct {
-	Config          *CPULoadConfiguration
-	id              string
-	cpuUpdateTicker *time.Ticker
-	cpuLoads        []float64
-	currentValue    string
-	updateTimestamp time.Time
-	recentAverages  []float64
-	currentAverage  float64
-}
-
-type CPULoadConfiguration struct {
-	UpdateInterval   int  `yaml:"update_interval" mapstructure:"update_interval"`
-	ShowAverageLoad  bool `yaml:"show_average_load" mapstructure:"show_average_load"`
-	LoadAverageCount int  `yaml:"load_average_count" mapstructure:"load_average_count"`
+type ComponentBuilder interface {
+	BuildComponent(identifier string, data interface{}) (BarComponent, error)
+	GetDescriptor() string
 }

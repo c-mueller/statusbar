@@ -14,35 +14,51 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package date
 
 import (
+	"fmt"
 	"github.com/c-mueller/statusbar/bar/bi"
-	"github.com/mitchellh/mapstructure"
+	"time"
 )
 
-var Builder = CPUComponentBuilder{}
+var Builder = DateComponentBuilder{}
 
-func (c *CPUComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
-	cfg := &CPULoadConfiguration{}
-	if i == nil {
-		cfg = &DefaultConfiguration
-	} else {
-		var ic *CPULoadConfiguration
-		err := mapstructure.Decode(i, &ic)
-		if err != nil {
-			return nil, err
-		}
-		cfg = ic
-	}
-	component := &CPULoadComponent{
-		Config: cfg,
-		id:     identifier,
+type DateComponentBuilder struct{}
+
+type DateComponent struct {
+	id string
+}
+
+func (b *DateComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
+	component := &DateComponent{
+		id: identifier,
 	}
 
 	return bi.BarComponent(component), nil
 }
 
-func (c *CPUComponentBuilder) GetDescriptor() string {
-	return "CPULoadDisplay"
+func (b *DateComponentBuilder) GetDescriptor() string {
+	return "Date"
+}
+
+func (c *DateComponent) Init() error {
+	return nil
+}
+
+func (c *DateComponent) Render() (string, error) {
+	y, m, d := time.Now().Date()
+	return fmt.Sprintf("%02d.%02d.%04d", d, int(m), y), nil
+}
+
+func (c *DateComponent) IsLatest(t time.Time) bool {
+	return false
+}
+
+func (c *DateComponent) Stop() error {
+	return nil
+}
+
+func (c *DateComponent) GetIdentifier() string {
+	return c.id
 }

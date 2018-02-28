@@ -14,37 +14,38 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package text
+package clock
 
 import (
+	"fmt"
 	"github.com/c-mueller/statusbar/bar/bi"
 	"github.com/mitchellh/mapstructure"
 	"time"
 )
 
-var DefaultConfig = TextComponentConfig{
-	Text: "My Message",
+var DefaultConfig = ClockConfig{
+	Blink: true,
 }
 
-var Builder = TextComponentBuilder{}
+var Builder = ClockComponentBuilder{}
 
-type TextComponentBuilder struct{}
+type ClockComponentBuilder struct{}
 
-type TextComponentConfig struct {
-	Text string `yaml:"text" mapstructure:"text"`
+type ClockConfig struct {
+	Blink bool `yaml:"blink" mapstructure:"blink"`
 }
 
-type TextComponent struct {
-	Config TextComponentConfig
+type ClockComponent struct {
+	Config ClockConfig
 	id     string
 }
 
-func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
-	cfg := TextComponentConfig{}
+func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
+	cfg := ClockConfig{}
 	if i == nil {
 		cfg = DefaultConfig
 	} else {
-		var ic *TextComponentConfig
+		var ic *ClockConfig
 		err := mapstructure.Decode(i, &ic)
 		if err != nil {
 			return nil, err
@@ -52,7 +53,7 @@ func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) 
 		cfg = *ic
 	}
 
-	component := &TextComponent{
+	component := &ClockComponent{
 		Config: cfg,
 		id:     identifier,
 	}
@@ -60,26 +61,31 @@ func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) 
 	return bi.BarComponent(component), nil
 }
 
-func (b *TextComponentBuilder) GetDescriptor() string {
-	return "Text"
+func (b *ClockComponentBuilder) GetDescriptor() string {
+	return "Clock"
 }
 
-func (c *TextComponent) Init() error {
+func (c *ClockComponent) Init() error {
 	return nil
 }
 
-func (c *TextComponent) Render() (string, error) {
-	return c.Config.Text, nil
+func (c *ClockComponent) Render() (string, error) {
+	format := "%02d:%02d:%02d"
+	h, m, s := time.Now().Clock()
+	if (s%2) == 0 && c.Config.Blink {
+		format = "%02d %02d %02d"
+	}
+	return fmt.Sprintf(format, h, m, s), nil
 }
 
-func (c *TextComponent) IsLatest(t time.Time) bool {
+func (c *ClockComponent) IsLatest(t time.Time) bool {
 	return true
 }
 
-func (c *TextComponent) Stop() error {
+func (c *ClockComponent) Stop() error {
 	return nil
 }
 
-func (c *TextComponent) GetIdentifier() string {
+func (c *ClockComponent) GetIdentifier() string {
 	return c.id
 }

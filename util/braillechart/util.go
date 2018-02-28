@@ -14,31 +14,32 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package braillechart
 
-import "time"
-
-var DefaultConfiguration = CPULoadConfiguration{
-	UpdateInterval:   1,
-	ShowAverageLoad:  true,
-	LoadAverageCount: 120,
+func encodeUnary(i uint8) uint64 {
+	if i > 64 {
+		return 0
+	}
+	result := uint64(0)
+	for idx := 0; uint8(idx) < i; idx++ {
+		result = (uint64(1) << uint(idx)) | result
+	}
+	return result
 }
 
-type CPUComponentBuilder struct{}
-
-type CPULoadComponent struct {
-	Config          *CPULoadConfiguration
-	id              string
-	cpuUpdateTicker *time.Ticker
-	cpuLoads        []float64
-	currentValue    string
-	updateTimestamp time.Time
-	recentAverages  []float64
-	currentAverage  float64
+func toBoolArray(v, len uint) []bool {
+	data := make([]bool, len)
+	for i := uint(0); i < len; i++ {
+		value := (v >> i) & 0x1
+		data[i] = value == 1
+	}
+	return data
 }
 
-type CPULoadConfiguration struct {
-	UpdateInterval   int  `yaml:"update_interval" mapstructure:"update_interval"`
-	ShowAverageLoad  bool `yaml:"show_average_load" mapstructure:"show_average_load"`
-	LoadAverageCount int  `yaml:"load_average_count" mapstructure:"load_average_count"`
+func isBetweenZeroAndOne(value float64) bool {
+	return isInRange(value, 0, 1)
+}
+
+func isInRange(value, lower, upper float64) bool {
+	return value >= lower && value <= upper
 }

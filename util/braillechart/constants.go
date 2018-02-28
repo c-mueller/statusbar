@@ -14,31 +14,8 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package braillechart
 
-import "time"
+import "errors"
 
-var DefaultConfiguration = CPULoadConfiguration{
-	UpdateInterval:   1,
-	ShowAverageLoad:  true,
-	LoadAverageCount: 120,
-}
-
-type CPUComponentBuilder struct{}
-
-type CPULoadComponent struct {
-	Config          *CPULoadConfiguration
-	id              string
-	cpuUpdateTicker *time.Ticker
-	cpuLoads        []float64
-	currentValue    string
-	updateTimestamp time.Time
-	recentAverages  []float64
-	currentAverage  float64
-}
-
-type CPULoadConfiguration struct {
-	UpdateInterval   int  `yaml:"update_interval" mapstructure:"update_interval"`
-	ShowAverageLoad  bool `yaml:"show_average_load" mapstructure:"show_average_load"`
-	LoadAverageCount int  `yaml:"load_average_count" mapstructure:"load_average_count"`
-}
+var InvalidDotLength error = errors.New("braillechart: BrailleCharacter has to have 8 Dots")

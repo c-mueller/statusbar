@@ -1,4 +1,20 @@
-package braillegraph
+//statusbar - (https://github.com/c-mueller/statusbar)
+//Copyright (c) 2018 Christian Müller <cmueller.dev@gmail.com>.
+//
+//This program is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+//
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+package braillechart
 
 import (
 	"math"
@@ -9,7 +25,7 @@ type GraphChar struct {
 	RightBar []bool
 }
 
-func NewGraphChar(left, right float64) *GraphChar {
+func NewChartChar(left, right float64) *GraphChar {
 	//if !isBetweenZeroAndOne(left) || !isBetweenZeroAndOne(right) {
 	//	fmt.Printf("L: %f, R: %f\n", left, right)
 	//	return nil
@@ -36,7 +52,7 @@ func NewGraphChar(left, right float64) *GraphChar {
 	return &gc
 }
 
-func (gc *GraphChar) ToBrailleChar() *BrailleChar {
+func (gc *GraphChar) ToBrailleChar() *BrailleCharacter {
 	value := uint8(0)
 
 	for i := 4; i > 1; i-- {

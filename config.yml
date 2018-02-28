@@ -1,0 +1,18 @@
+refresh_interval: 500
+components:
+  - identifier: message
+    type: Text
+    spec:
+      text: Hello World!
+  - identifier: cpu
+    type: CPULoadDisplay
+    spec:
+      update_interval: 1
+      show_average_load: true
+      load_average_count: 120
+  - identifier: date
+    type: Date
+  - identifier: clock
+    type: Clock
+    spec:
+      blink: false

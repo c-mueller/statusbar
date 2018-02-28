@@ -1,8 +1,24 @@
-package braillegraph
+//statusbar - (https://github.com/c-mueller/statusbar)
+//Copyright (c) 2018 Christian Müller <cmueller.dev@gmail.com>.
+//
+//This program is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+//
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+package braillechart
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func Test_EncodeUnary(t *testing.T) {
@@ -28,7 +44,7 @@ func TestBraille_Char_Empty(t *testing.T) {
 	bc := NewBrailleChar(0)
 	assert.NotNil(t, bc)
 	chr, err := bc.MapToBrailleChar()
-	logChar(t,chr)
+	logChar(t, chr)
 	assert.NoError(t, err)
 	assert.Equal(t, rune(0x2800), chr)
 }
@@ -37,7 +53,7 @@ func TestBraille_Char_Full(t *testing.T) {
 	bc := NewBrailleChar(0xFF)
 	assert.NotNil(t, bc)
 	chr, err := bc.MapToBrailleChar()
-	logChar(t,chr)
+	logChar(t, chr)
 	assert.NoError(t, err)
 	assert.Equal(t, rune(0x28FF), chr)
 }
@@ -46,7 +62,7 @@ func TestBraille_Char_6_Full(t *testing.T) {
 	bc := NewBrailleChar(0x3F)
 	assert.NotNil(t, bc)
 	chr, err := bc.MapToBrailleChar()
-	logChar(t,chr)
+	logChar(t, chr)
 	assert.NoError(t, err)
 	assert.Equal(t, rune(0x283F), chr)
 }
@@ -55,84 +71,84 @@ func TestBraille_Char_C0(t *testing.T) {
 	bc := NewBrailleChar(0xC0)
 	assert.NotNil(t, bc)
 	chr, err := bc.MapToBrailleChar()
-	logChar(t,chr)
+	logChar(t, chr)
 	assert.NoError(t, err)
 	assert.Equal(t, rune(0x28C0), chr)
 }
 
-func TestBraille_Graph_Right_Complete(t *testing.T) {
-	g := NewGraphChar(0, 1)
+func TestBraille_Chart_Right_Complete(t *testing.T) {
+	g := NewChartChar(0, 1)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x28B8), chr)
 }
 
-func TestBraille_Graph_Right_3Quarter(t *testing.T) {
-	g := NewGraphChar(0, 0.75)
+func TestBraille_Chart_Right_3Quarter(t *testing.T) {
+	g := NewChartChar(0, 0.75)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x28B0), chr)
 }
 
-func TestBraille_Graph_Right_Half(t *testing.T) {
-	g := NewGraphChar(0, 0.5)
+func TestBraille_Chart_Right_Half(t *testing.T) {
+	g := NewChartChar(0, 0.5)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x28A0), chr)
 }
 
-func TestBraille_Graph_Right_Quarter(t *testing.T) {
-	g := NewGraphChar(0, 0.25)
+func TestBraille_Chart_Right_Quarter(t *testing.T) {
+	g := NewChartChar(0, 0.25)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x2880), chr)
 }
 
-func TestBraille_Graph_Left_Complete(t *testing.T) {
-	g := NewGraphChar(1, 0)
+func TestBraille_Chart_Left_Complete(t *testing.T) {
+	g := NewChartChar(1, 0)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x2847), chr)
 }
 
-func TestBraille_Graph_Left_3Quarter(t *testing.T) {
-	g := NewGraphChar(0.75, 0)
+func TestBraille_Chart_Left_3Quarter(t *testing.T) {
+	g := NewChartChar(0.75, 0)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x2846), chr)
 }
 
-func TestBraille_Graph_Left_Half(t *testing.T) {
-	g := NewGraphChar(0.5, 0)
+func TestBraille_Chart_Left_Half(t *testing.T) {
+	g := NewChartChar(0.5, 0)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x2844), chr)
 }
 
-func TestBraille_Graph_Left_Quarter(t *testing.T) {
-	g := NewGraphChar(0.25, 0)
+func TestBraille_Chart_Left_Quarter(t *testing.T) {
+	g := NewChartChar(0.25, 0)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x2840), chr)
 }
 
-func TestBraille_Graph_Zero(t *testing.T) {
-	g := NewGraphChar(0, 0)
+func TestBraille_Chart_Zero(t *testing.T) {
+	g := NewChartChar(0, 0)
 	assert.NotNil(t, g)
 	bc := g.ToBrailleChar()
 	chr := processBrailleChar(t, bc)
 	assert.Equal(t, rune(0x2800), chr)
 }
 
-func processBrailleChar(t *testing.T, bc *BrailleChar) rune {
+func processBrailleChar(t *testing.T, bc *BrailleCharacter) rune {
 	assert.NotNil(t, bc)
 	chr, err := bc.MapToBrailleChar()
 	logChar(t, chr)
