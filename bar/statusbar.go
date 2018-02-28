@@ -1,18 +1,18 @@
-//statusbar - (https://github.com/c-mueller/statusbar)
-//Copyright (c) 2018 Christian Müller <cmueller.dev@gmail.com>.
+// statusbar - (https://github.com/c-mueller/statusbar)
+// Copyright (c) 2018 Christian Müller <cmueller.dev@gmail.com>.
 //
-//This program is free software: you can redistribute it and/or modify
-//it under the terms of the GNU General Public License as published by
-//the Free Software Foundation, either version 3 of the License, or
-//(at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-//This program is distributed in the hope that it will be useful,
-//but WITHOUT ANY WARRANTY; without even the implied warranty of
-//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//GNU General Public License for more details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//You should have received a copy of the GNU General Public License
-//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package bar
 
@@ -39,7 +39,7 @@ func BuildFromConfig(config []byte) (*StatusBar, error) {
 				if err != nil {
 					return nil, err
 				}
-				sb.addComponent(component)
+				sb.addComponent(component, v)
 			}
 		}
 		if !componentFound {
@@ -52,27 +52,32 @@ func BuildFromConfig(config []byte) (*StatusBar, error) {
 
 func newStatusBar() *StatusBar {
 	return &StatusBar{
-		Components:      make([]bi.BarComponent, 0),
+		components:      make([]*componentInstance, 0),
 		RefreshInterval: 500 * time.Millisecond,
 	}
 }
 
-func (bar *StatusBar) addComponent(component bi.BarComponent) error {
-
-	for _, v := range bar.Components {
-		if v.GetIdentifier() == component.GetIdentifier() {
+func (bar *StatusBar) addComponent(component bi.BarComponent, config StatusBarComponentConfig) error {
+	for _, v := range bar.components {
+		if v.GetIdentifier() == config.Identifier {
 			return errors.New(fmt.Sprintf("Invalid identifier name %q is already in use", component.GetIdentifier()))
 		}
 	}
 
-	bar.Components = append(bar.Components, component)
+	instance := componentInstance{
+		component: component,
+		id:        config.Identifier,
+		config:    &config,
+	}
+
+	bar.components = append(bar.components, &instance)
 
 	return nil
 }
 
 func (bar *StatusBar) Init() error {
-	for _, v := range bar.Components {
-		err := v.Init()
+	for _, v := range bar.components {
+		err := v.component.Init()
 		if err != nil {
 			return err
 		}
@@ -81,8 +86,8 @@ func (bar *StatusBar) Init() error {
 }
 
 func (bar *StatusBar) RenderTerminal() error {
-	for _, v := range bar.Components {
-		defer v.Stop()
+	for _, v := range bar.components {
+		defer v.component.Stop()
 	}
 	oldlen := 0
 	for {
@@ -93,18 +98,26 @@ func (bar *StatusBar) RenderTerminal() error {
 		}
 		// Print new Output
 		resultString := ""
-		for i, v := range bar.Components {
-			r, err := v.Render()
+		for i, v := range bar.components {
+			r, err := v.component.Render()
 			if err != nil {
 				return err
 			}
 			resultString += r
-			if i < len(bar.Components)-1 {
-				resultString += " | "
+			if i < len(bar.components)-1 {
+				if v.config.CustomSeparator {
+					resultString += v.config.CustomSeparatorValue
+				} else {
+					resultString += " | "
+				}
 			}
 		}
 		fmt.Printf("\r%s", resultString)
 		oldlen = len(resultString)
 		time.Sleep(bar.RefreshInterval)
 	}
+}
+
+func (c *componentInstance) GetIdentifier() string {
+	return c.component.GetIdentifier()
 }

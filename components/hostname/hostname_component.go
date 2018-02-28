@@ -14,51 +14,60 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package date
+package hostname
 
 import (
 	"fmt"
 	"github.com/c-mueller/statusbar/bar/bi"
+	"os"
+	"os/user"
 	"time"
 )
 
-var Builder = DateComponentBuilder{}
+var Builder = HostnameComponentBuilder{}
 
-type DateComponentBuilder struct{}
+type HostnameComponentBuilder struct{}
 
-type DateComponent struct {
+type HostnameComponent struct {
 	id string
 }
 
-func (b *DateComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
-	component := &DateComponent{
+func (b *HostnameComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
+	component := &HostnameComponent{
 		id: identifier,
 	}
 
 	return bi.BarComponent(component), nil
 }
 
-func (b *DateComponentBuilder) GetDescriptor() string {
-	return "Date"
+func (b *HostnameComponentBuilder) GetDescriptor() string {
+	return "Hostname"
 }
 
-func (c *DateComponent) Init() error {
+func (c *HostnameComponent) Init() error {
 	return nil
 }
 
-func (c *DateComponent) Render() (string, error) {
-	y, m, d := time.Now().Date()
-	return fmt.Sprintf("%02d.%02d.%04d", d, int(m), y), nil
+func (c *HostnameComponent) Render() (string, error) {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return "", err
+	}
+	u, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s@%s", u.Username, hostname), nil
 }
 
-func (c *DateComponent) IsLatest(t time.Time) bool {
-	return false
+func (c *HostnameComponent) IsLatest(t time.Time) bool {
+	return true
 }
 
-func (c *DateComponent) Stop() error {
+func (c *HostnameComponent) Stop() error {
 	return nil
 }
 
-func (c *DateComponent) GetIdentifier() string {
+func (c *HostnameComponent) GetIdentifier() string {
 	return c.id
 }

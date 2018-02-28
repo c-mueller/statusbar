@@ -1,16 +1,37 @@
+# statusbar - (https://github.com/c-mueller/statusbar)
+# Copyright (c) 2018 Christian Müller <cmueller.dev@gmail.com>.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 refresh_interval: 500
 components:
-  - identifier: message
-    type: Text
-    spec:
-      text: Hello World!
+  - identifier: hostname
+    type: Hostname
   - identifier: cpu
     type: CPULoadDisplay
     spec:
       update_interval: 1
       show_average_load: true
       load_average_count: 120
+  - identifier: date_message
+    type: Text
+    custom_separator: true
+    separator: " "
+    spec:
+      text: "TIME:"
   - identifier: date
+    custom_separator: true
+    separator: " - "
     type: Date
   - identifier: clock
     type: Clock
