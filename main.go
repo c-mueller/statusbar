@@ -20,11 +20,26 @@ import (
 	"io/ioutil"
 	"os"
 
+	"fmt"
 	"github.com/c-mueller/statusbar/bar"
+	"gopkg.in/alecthomas/kingpin.v2"
+)
+
+var (
+	configPath   = kingpin.Flag("config", "The Path to the Configuration file").Default("config.yml").Short('c').ExistingFile()
+	terminalMode = kingpin.Flag("terminal", "Render the Statusbar in Terminal Mode").Short('t').Bool()
+	i3wmMode     = kingpin.Flag("i3", "Render the Statusbar in i3wm Mode").Short('i').Bool()
 )
 
 func main() {
-	f, err := os.Open("config.yml")
+	kingpin.Parse()
+
+	if *terminalMode == *i3wmMode {
+		fmt.Println("The Application can either Run in i3wm or Terminal Mode!")
+		os.Exit(1)
+	}
+
+	f, err := os.Open(*configPath)
 	if err != nil {
 		panic(err)
 	}
@@ -38,6 +53,10 @@ func main() {
 	}
 
 	sb.Init()
-	
-	sb.RenderTerminal()
+
+	if *terminalMode {
+		sb.RenderTerminal()
+	} else if *i3wmMode {
+		sb.RenderI3()
+	}
 }
