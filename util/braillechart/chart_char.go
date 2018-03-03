@@ -52,6 +52,10 @@ func NewChartChar(left, right float64) *GraphChar {
 	return &gc
 }
 
+func (gc *GraphChar) SumValues() uint {
+	return countTrueEntries(gc.RightBar) + countTrueEntries(gc.LeftBar)
+}
+
 func (gc *GraphChar) ToBrailleChar() *BrailleCharacter {
 	value := uint8(0)
 

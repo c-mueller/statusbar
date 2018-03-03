@@ -17,9 +17,10 @@
 package main
 
 import (
-	"github.com/c-mueller/statusbar/bar"
 	"io/ioutil"
 	"os"
+
+	"github.com/c-mueller/statusbar/bar"
 )
 
 func main() {
@@ -37,5 +38,6 @@ func main() {
 	}
 
 	sb.Init()
+	
 	sb.RenderTerminal()
 }

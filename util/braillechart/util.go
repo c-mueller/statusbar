@@ -43,3 +43,13 @@ func isBetweenZeroAndOne(value float64) bool {
 func isInRange(value, lower, upper float64) bool {
 	return value >= lower && value <= upper
 }
+
+func countTrueEntries(a []bool) uint {
+	cnt := uint(0)
+	for _, v := range a {
+		if v {
+			cnt++
+		}
+	}
+	return cnt
+}
