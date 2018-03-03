@@ -19,6 +19,7 @@ package bar
 import (
 	"fmt"
 	"github.com/gin-gonic/gin/json"
+	"time"
 )
 
 type I3BarRenderer struct {
@@ -27,6 +28,12 @@ type I3BarRenderer struct {
 type i3BarHeader struct {
 	Version     int  `json:"version"`
 	ClickEvents bool `json:"click_events"`
+}
+
+type i3BarBlock struct {
+	Name     string `json:"name"`
+	Instance string `json:"instance"`
+	FullText string `json:"full_text"`
 }
 
 func (r *I3BarRenderer) writeHeader() {
@@ -38,7 +45,40 @@ func (r *I3BarRenderer) writeHeader() {
 	fmt.Println(string(data))
 }
 
-func (r *I3BarRenderer) Render(sb *StatusBar) error {
+func (r *I3BarRenderer) Render(bar *StatusBar) error {
+	for _, v := range bar.components {
+		defer v.component.Stop()
+	}
+
+	//Send Array Opening Bracket
+	fmt.Print("[[]")
+	for {
+		//Begin new Block
+		fmt.Print(",[")
+		for i, v := range bar.components {
+			r, err := v.component.Render()
+			if err != nil {
+				return err
+			}
+
+			block := i3BarBlock{
+				Name:     v.GetIdentifier(),
+				Instance: v.GetIdentifier(),
+				FullText: r,
+			}
+			obj, _ := json.Marshal(block)
+			fmt.Print(string(obj))
+			if i < len(bar.components)-1 {
+				fmt.Print(",")
+			}
+		}
+
+		//"Flush" output
+		fmt.Println("]")
+
+		//Wait for next refresh
+		time.Sleep(bar.RefreshInterval)
+	}
 	return nil
 }
 
