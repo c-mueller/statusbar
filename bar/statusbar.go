@@ -39,7 +39,10 @@ func BuildFromConfig(config []byte) (*StatusBar, error) {
 				if err != nil {
 					return nil, err
 				}
-				sb.addComponent(component, v)
+				err = sb.addComponent(component, v)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 		if !componentFound {
