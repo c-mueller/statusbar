@@ -18,7 +18,7 @@ package clock
 
 import (
 	"fmt"
-	"github.com/c-mueller/statusbar/bar/bi"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/mitchellh/mapstructure"
 	"time"
 )
@@ -40,7 +40,7 @@ type ClockComponent struct {
 	id     string
 }
 
-func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
+func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
 	cfg := ClockConfig{}
 	if i == nil {
 		cfg = DefaultConfig
@@ -58,7 +58,7 @@ func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{})
 		id:     identifier,
 	}
 
-	return bi.BarComponent(component), nil
+	return statusbarlib.BarComponent(component), nil
 }
 
 func (b *ClockComponentBuilder) GetDescriptor() string {
@@ -76,10 +76,6 @@ func (c *ClockComponent) Render() (string, error) {
 		format = "%02d %02d %02d"
 	}
 	return fmt.Sprintf(format, h, m, s), nil
-}
-
-func (c *ClockComponent) IsLatest(t time.Time) bool {
-	return true
 }
 
 func (c *ClockComponent) Stop() error {

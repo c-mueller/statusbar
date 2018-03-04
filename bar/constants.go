@@ -17,18 +17,20 @@
 package bar
 
 import (
-	"github.com/c-mueller/statusbar/bar/bi"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/c-mueller/statusbar/components/clock"
 	"github.com/c-mueller/statusbar/components/cpu"
 	"github.com/c-mueller/statusbar/components/date"
 	"github.com/c-mueller/statusbar/components/hostname"
+	"github.com/c-mueller/statusbar/components/mem"
 	"github.com/c-mueller/statusbar/components/text"
 )
 
-var builders = []bi.ComponentBuilder{
-	bi.ComponentBuilder(&cpu.Builder),
-	bi.ComponentBuilder(&text.Builder),
-	bi.ComponentBuilder(&date.Builder),
-	bi.ComponentBuilder(&clock.Builder),
-	bi.ComponentBuilder(&hostname.Builder),
+var builders = []statusbarlib.ComponentBuilder{
+	statusbarlib.ComponentBuilder(&cpu.Builder),
+	statusbarlib.ComponentBuilder(&text.Builder),
+	statusbarlib.ComponentBuilder(&date.Builder),
+	statusbarlib.ComponentBuilder(&clock.Builder),
+	statusbarlib.ComponentBuilder(&hostname.Builder),
+	statusbarlib.ComponentBuilder(&mem.Builder),
 }

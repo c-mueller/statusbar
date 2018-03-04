@@ -19,7 +19,7 @@ package bar
 import (
 	"errors"
 	"fmt"
-	"github.com/c-mueller/statusbar/bar/bi"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"gopkg.in/yaml.v2"
 	"time"
 )
@@ -57,7 +57,7 @@ func newStatusBar() *StatusBar {
 	}
 }
 
-func (bar *StatusBar) addComponent(component bi.BarComponent, config StatusBarComponentConfig) error {
+func (bar *StatusBar) addComponent(component statusbarlib.BarComponent, config StatusBarComponentConfig) error {
 	for _, v := range bar.components {
 		if v.GetIdentifier() == config.Identifier {
 			return errors.New(fmt.Sprintf("Invalid identifier name %q is already in use", component.GetIdentifier()))

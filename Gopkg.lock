@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "code.cloudfoundry.org/bytefmt"
+  packages = ["."]
+  revision = "b31f603f5e1e047fdb38584e1a922dcc5c4de5c8"
+
+[[projects]]
   name = "github.com/StackExchange/wmi"
   packages = ["."]
   revision = "5d049714c4a64225c3c79a7cf7d02f7fb5b96338"
@@ -51,12 +57,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/logrusorgru/aurora"
-  packages = ["."]
-  revision = "ca24023cc0175fdf372518cb1c5062cc86db2634"
-
-[[projects]]
-  branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
@@ -83,7 +83,8 @@
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
-    "internal/common"
+    "internal/common",
+    "mem"
   ]
   revision = "c432be29ccce470088d07eea25b3ea7e68a8afbb"
   version = "v2.18.01"
@@ -118,6 +119,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8210432a8342ffdf0897c5b0708c6b5230224544ddede0ae1f930e3c8c616faf"
+  inputs-digest = "938631bc2cc39d92ad3e0b8156b77d1dc04893b7f8ab0d77122027402bea27fb"
   solver-name = "gps-cdcl"
   solver-version = 1

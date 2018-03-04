@@ -44,10 +44,6 @@ func (c *CPULoadComponent) Render() (string, error) {
 	return c.currentValue, nil
 }
 
-func (c *CPULoadComponent) IsLatest(t time.Time) bool {
-	return t == c.updateTimestamp
-}
-
 func (c *CPULoadComponent) Stop() error {
 	c.cpuUpdateTicker.Stop()
 	return nil
@@ -70,23 +66,10 @@ func (c *CPULoadComponent) composeString() string {
 
 		chr, _ := bc.ToBrailleChar().MapToBrailleChar()
 
-		//format := aurora.Bold("%c")
-		//if bc.SumValues() >= 7 {
-		//	format = aurora.Red(format)
-		//} else {
-		//	format = aurora.Green(format)
-		//}
-
 		cpuLoads += fmt.Sprintf("%c", chr)
 	}
 	if c.Config.ShowAverageLoad {
-		formatString := "%03d%%"
-		//currentColor := aurora.Bold(formatString)
-		//if c.currentAverage <= 75 {
-		//	currentColor = aurora.Green(currentColor)
-		//} else if c.currentAverage > 75 {
-		//	currentColor = aurora.Red(currentColor)
-		//}
+		formatString := "%02d%%"
 
 		cpuLoads += fmt.Sprintf(" | AVG: %s", fmt.Sprintf(formatString, int(c.currentAverage)))
 	}

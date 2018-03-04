@@ -17,9 +17,8 @@
 package text
 
 import (
-	"github.com/c-mueller/statusbar/bar/bi"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/mitchellh/mapstructure"
-	"time"
 )
 
 var DefaultConfig = TextComponentConfig{
@@ -39,7 +38,7 @@ type TextComponent struct {
 	id     string
 }
 
-func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
+func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
 	cfg := TextComponentConfig{}
 	if i == nil {
 		cfg = DefaultConfig
@@ -57,7 +56,7 @@ func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) 
 		id:     identifier,
 	}
 
-	return bi.BarComponent(component), nil
+	return statusbarlib.BarComponent(component), nil
 }
 
 func (b *TextComponentBuilder) GetDescriptor() string {
@@ -70,10 +69,6 @@ func (c *TextComponent) Init() error {
 
 func (c *TextComponent) Render() (string, error) {
 	return c.Config.Text, nil
-}
-
-func (c *TextComponent) IsLatest(t time.Time) bool {
-	return true
 }
 
 func (c *TextComponent) Stop() error {

@@ -18,11 +18,17 @@ components:
   - identifier: hostname
     type: Hostname
   - identifier: cpu
-    type: CPULoadDisplay
+    type: CPU
     spec:
       update_interval: 1
       show_average_load: true
       load_average_count: 120
+  - identifier: memory
+    type: Memory
+    spec:
+      invert: true
+      show_swap: true
+      show_bytes: true
   - identifier: date_message
     type: Text
     custom_separator: true
@@ -36,4 +42,4 @@ components:
   - identifier: clock
     type: Clock
     spec:
-      blink: false
+      blink: true

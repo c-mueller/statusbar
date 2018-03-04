@@ -14,33 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package mem
 
-import (
-	"github.com/c-mueller/statusbar/bar/statusbarlib"
-	"time"
-)
-
-type StatusBar struct {
-	components      []*componentInstance
-	RefreshInterval time.Duration
+var DefaultConfiguration = MemoryComponentConfig{
+	ShowSwap: false,
 }
 
-type StatusBarConfig struct {
-	RefreshInterval int                        `yaml:"refresh_interval"`
-	Components      []StatusBarComponentConfig `yaml:"components"`
+type MemoryComponentBuilder struct {
 }
 
-type StatusBarComponentConfig struct {
-	Identifier           string      `yaml:"identifier"`
-	Type                 string      `yaml:"type"`
-	CustomSeparator      bool        `yaml:"custom_separator"`
-	CustomSeparatorValue string      `yaml:"separator"`
-	Spec                 interface{} `yaml:"spec"`
+type MemoryComponent struct {
+	Config *MemoryComponentConfig
+	id     string
 }
 
-type componentInstance struct {
-	config    *StatusBarComponentConfig
-	component statusbarlib.BarComponent
-	id        string
+type MemoryComponentConfig struct {
+	ShowSwap     bool `yaml:"show_swap" mapstructure:"show_swap"`
+	ShowBytes    bool `yaml:"show_bytes" mapstructure:"show_bytes"`
+	InvertValues bool `yaml:"invert" mapstructure:"invert"`
 }

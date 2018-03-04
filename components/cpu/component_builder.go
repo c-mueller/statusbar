@@ -14,19 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bi
+package cpu
 
-import "time"
+import (
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/mitchellh/mapstructure"
+)
 
-type BarComponent interface {
-	GetIdentifier() string
-	Init() error
-	Render() (string, error)
-	IsLatest(date time.Time) bool
-	Stop() error
+var Builder = CPUComponentBuilder{}
+
+func (c *CPUComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	cfg := &CPULoadConfiguration{}
+	if i == nil {
+		cfg = &DefaultConfiguration
+	} else {
+		var ic *CPULoadConfiguration
+		err := mapstructure.Decode(i, &ic)
+		if err != nil {
+			return nil, err
+		}
+		cfg = ic
+	}
+	component := &CPULoadComponent{
+		Config: cfg,
+		id:     identifier,
+	}
+
+	return statusbarlib.BarComponent(component), nil
 }
 
-type ComponentBuilder interface {
-	BuildComponent(identifier string, data interface{}) (BarComponent, error)
-	GetDescriptor() string
+func (c *CPUComponentBuilder) GetDescriptor() string {
+	return "CPU"
 }

@@ -18,10 +18,9 @@ package hostname
 
 import (
 	"fmt"
-	"github.com/c-mueller/statusbar/bar/bi"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"os"
 	"os/user"
-	"time"
 )
 
 var Builder = HostnameComponentBuilder{}
@@ -32,12 +31,12 @@ type HostnameComponent struct {
 	id string
 }
 
-func (b *HostnameComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
+func (b *HostnameComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
 	component := &HostnameComponent{
 		id: identifier,
 	}
 
-	return bi.BarComponent(component), nil
+	return statusbarlib.BarComponent(component), nil
 }
 
 func (b *HostnameComponentBuilder) GetDescriptor() string {
@@ -58,10 +57,6 @@ func (c *HostnameComponent) Render() (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("%s@%s", u.Username, hostname), nil
-}
-
-func (c *HostnameComponent) IsLatest(t time.Time) bool {
-	return true
 }
 
 func (c *HostnameComponent) Stop() error {

@@ -14,35 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package mem
 
 import (
-	"github.com/c-mueller/statusbar/bar/bi"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/mitchellh/mapstructure"
 )
 
-var Builder = CPUComponentBuilder{}
+var Builder = MemoryComponentBuilder{}
 
-func (c *CPUComponentBuilder) BuildComponent(identifier string, i interface{}) (bi.BarComponent, error) {
-	cfg := &CPULoadConfiguration{}
+func (c *MemoryComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	cfg := &MemoryComponentConfig{}
 	if i == nil {
 		cfg = &DefaultConfiguration
 	} else {
-		var ic *CPULoadConfiguration
+		var ic *MemoryComponentConfig
 		err := mapstructure.Decode(i, &ic)
 		if err != nil {
 			return nil, err
 		}
 		cfg = ic
 	}
-	component := &CPULoadComponent{
+	component := &MemoryComponent{
 		Config: cfg,
 		id:     identifier,
 	}
 
-	return bi.BarComponent(component), nil
+	return statusbarlib.BarComponent(component), nil
 }
 
-func (c *CPUComponentBuilder) GetDescriptor() string {
-	return "CPULoadDisplay"
+func (c *MemoryComponentBuilder) GetDescriptor() string {
+	return "Memory"
 }
