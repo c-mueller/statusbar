@@ -55,23 +55,31 @@ func (r *I3BarRenderer) Render(bar *StatusBar) error {
 	for {
 		//Begin new Block
 		fmt.Print(",[")
+
+		resultString := ""
 		for i, v := range bar.components {
 			r, err := v.component.Render()
 			if err != nil {
 				return err
 			}
 
-			block := i3BarBlock{
-				Name:     v.GetIdentifier(),
-				Instance: v.GetIdentifier(),
-				FullText: r,
-			}
-			obj, _ := json.Marshal(block)
-			fmt.Print(string(obj))
+			resultString += r
 			if i < len(bar.components)-1 {
-				fmt.Print(",")
+				if v.config.CustomSeparator {
+					resultString += v.config.CustomSeparatorValue
+				} else {
+					resultString += " | "
+				}
 			}
 		}
+
+		block := i3BarBlock{
+			Name:     "block",
+			Instance: "block",
+			FullText: resultString,
+		}
+		obj, _ := json.Marshal(block)
+		fmt.Print(string(obj))
 
 		//"Flush" output
 		fmt.Println("]")

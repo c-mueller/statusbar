@@ -19,7 +19,6 @@ package cpu
 import (
 	"fmt"
 	"github.com/c-mueller/statusbar/util/braillechart"
-	"github.com/logrusorgru/aurora"
 	"github.com/shirou/gopsutil/cpu"
 	"runtime"
 	"time"
@@ -71,25 +70,25 @@ func (c *CPULoadComponent) composeString() string {
 
 		chr, _ := bc.ToBrailleChar().MapToBrailleChar()
 
-		format := aurora.Bold("%c")
-		if bc.SumValues() >= 7 {
-			format = aurora.Red(format)
-		} else {
-			format = aurora.Green(format)
-		}
+		//format := aurora.Bold("%c")
+		//if bc.SumValues() >= 7 {
+		//	format = aurora.Red(format)
+		//} else {
+		//	format = aurora.Green(format)
+		//}
 
-		cpuLoads += aurora.Sprintf(format, chr)
+		cpuLoads += fmt.Sprintf("%c", chr)
 	}
 	if c.Config.ShowAverageLoad {
 		formatString := "%03d%%"
-		currentColor := aurora.Bold(formatString)
-		if c.currentAverage <= 75 {
-			currentColor = aurora.Green(currentColor)
-		} else if c.currentAverage > 75 {
-			currentColor = aurora.Red(currentColor)
-		}
+		//currentColor := aurora.Bold(formatString)
+		//if c.currentAverage <= 75 {
+		//	currentColor = aurora.Green(currentColor)
+		//} else if c.currentAverage > 75 {
+		//	currentColor = aurora.Red(currentColor)
+		//}
 
-		cpuLoads += fmt.Sprintf(" | AVG: %s", aurora.Sprintf(currentColor, int(c.currentAverage)))
+		cpuLoads += fmt.Sprintf(" | AVG: %s", fmt.Sprintf(formatString, int(c.currentAverage)))
 	}
 	return cpuLoads
 }
