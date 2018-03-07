@@ -17,6 +17,14 @@ refresh_interval: 500
 components:
   - identifier: hostname
     type: Hostname
+  - identifier: uptime_label
+    type: Text
+    custom_separator: true
+    separator: " "
+    spec:
+      text: "UP:"
+  - identifier: uptime
+    type: Uptime
   - identifier: cpu
     type: CPU
     spec:

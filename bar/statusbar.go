@@ -22,9 +22,14 @@ import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"gopkg.in/yaml.v2"
 	"time"
+	"github.com/op/go-logging"
 )
 
+var log = logging.MustGetLogger("sb_builder")
+
 func BuildFromConfig(config []byte) (*StatusBar, error) {
+	log.Debug("Building Statusbar...")
+
 	var cfg *StatusBarConfig
 	yaml.Unmarshal(config, &cfg)
 
@@ -50,6 +55,8 @@ func BuildFromConfig(config []byte) (*StatusBar, error) {
 		}
 	}
 
+	log.Debugf("Added %d components", len(sb.components))
+
 	return sb, nil
 }
 
@@ -61,6 +68,7 @@ func newStatusBar() *StatusBar {
 }
 
 func (bar *StatusBar) addComponent(component statusbarlib.BarComponent, config StatusBarComponentConfig) error {
+	log.Debugf("Adding component %q of type %q", config.Identifier, config.Type)
 	for _, v := range bar.components {
 		if v.GetIdentifier() == config.Identifier {
 			return errors.New(fmt.Sprintf("Invalid identifier name %q is already in use", component.GetIdentifier()))
@@ -80,6 +88,7 @@ func (bar *StatusBar) addComponent(component statusbarlib.BarComponent, config S
 
 func (bar *StatusBar) Init() error {
 	for _, v := range bar.components {
+		log.Debugf("Initializing component %q", v.config.Identifier)
 		err := v.component.Init()
 		if err != nil {
 			return err

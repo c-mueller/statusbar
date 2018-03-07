@@ -91,6 +91,7 @@ func (r *I3BarRenderer) Render(bar *StatusBar) error {
 }
 
 func (r *I3BarRenderer) Init(sb *StatusBar) error {
+	log.Debug("Initializing i3wm renderer")
 	r.writeHeader()
 	return nil
 }

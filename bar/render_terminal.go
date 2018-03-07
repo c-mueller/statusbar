@@ -59,6 +59,6 @@ func (t *TerminalRenderer) Render(bar *StatusBar) error {
 }
 
 func (t *TerminalRenderer) Init(sb *StatusBar) error {
-
+	log.Debug("Initializing terminal renderer")
 	return nil
 }

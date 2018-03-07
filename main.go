@@ -23,37 +23,68 @@ import (
 	"fmt"
 	"github.com/c-mueller/statusbar/bar"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"github.com/op/go-logging"
 )
 
 var (
 	configPath   = kingpin.Flag("config", "The Path to the Configuration file").Default("config.yml").Short('c').ExistingFile()
 	terminalMode = kingpin.Flag("terminal", "Render the Statusbar in Terminal Mode").Short('t').Bool()
 	i3wmMode     = kingpin.Flag("i3", "Render the Statusbar in i3wm Mode").Short('i').Bool()
+
+	verbose      = kingpin.Flag("verbose", "Print Verbose Information to Stderr").Short('v').Default("false").Bool()
+	debug        = kingpin.Flag("debug", "Print debug Information to Stderr (Includes verbose mode)").Short('d').Default("false").Bool()
 )
+
+var format = logging.MustStringFormatter(
+	`%{color}[%{time:15:04:05} - %{level}] - %{module}:%{color:reset} %{message}`,
+)
+
+var log = logging.MustGetLogger("sb_main")
 
 func main() {
 	kingpin.Parse()
+
+	backend := logging.NewLogBackend(os.Stderr, "", 0)
+	backendFormatter := logging.NewBackendFormatter(backend, format)
+	leveledBackend := logging.AddModuleLevel(backendFormatter)
+	if *debug {
+		leveledBackend.SetLevel(logging.DEBUG, "")
+	} else if *verbose {
+		leveledBackend.SetLevel(logging.INFO, "")
+	} else {
+		leveledBackend.SetLevel(logging.ERROR, "")
+	}
+
+	logging.SetBackend(leveledBackend)
+
+	log.Debug("Parsed Command Line arguments")
 
 	if *terminalMode == *i3wmMode {
 		fmt.Println("The Application can either Run in i3wm or Terminal Mode!")
 		os.Exit(1)
 	}
 
+	log.Debugf("Reading Config from %q", *configPath)
 	f, err := os.Open(*configPath)
 	if err != nil {
-		panic(err)
+		log.Error("Opening the config file", *configPath, "has failed. Error Message:", err.Error())
+		os.Exit(1)
 	}
 	cfgbytes, err := ioutil.ReadAll(f)
 	if err != nil {
-		panic(err)
+		log.Error("Reading the config file", *configPath, "has failed. Error Message:", err.Error())
+		os.Exit(1)
 	}
 	sb, err := bar.BuildFromConfig(cfgbytes)
 	if err != nil {
-		panic(err)
+		log.Error("Building the Statusbar from the config file", *configPath, "has failed. Error Message:", err.Error())
+		os.Exit(1)
 	}
 
+	log.Debug("Initializing...")
 	sb.Init()
 
+	log.Debug("Rendering...")
 	if *terminalMode {
 		sb.RenderTerminal()
 	} else if *i3wmMode {
