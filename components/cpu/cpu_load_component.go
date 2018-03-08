@@ -32,7 +32,7 @@ func (c *CPULoadComponent) Init() error {
 	c.currentValue = c.composeString()
 
 	//Build Tickers
-	c.cpuUpdateTicker = time.NewTicker(time.Duration(c.Config.UpdateInterval) * time.Millisecond)
+	c.cpuUpdateTicker = time.NewTicker(c.getRefreshDuration())
 
 	//Start Goroutines
 	go c.cpuUpdateHandler()
@@ -78,7 +78,7 @@ func (c *CPULoadComponent) composeString() string {
 
 func (c *CPULoadComponent) cpuUpdateHandler() {
 	for range c.cpuUpdateTicker.C {
-		data, _ := cpu.Percent(time.Duration(c.Config.UpdateInterval)*time.Second, true)
+		data, _ := cpu.Percent(c.getRefreshDuration(), true)
 		avg := 0.0
 		for k, v := range data {
 			c.cpuLoads[k] = v
@@ -100,4 +100,8 @@ func (c *CPULoadComponent) cpuUpdateHandler() {
 		c.updateTimestamp = time.Now()
 		c.currentValue = c.composeString()
 	}
+}
+
+func (c *CPULoadComponent) getRefreshDuration() time.Duration {
+	return time.Duration(c.Config.UpdateInterval) * time.Millisecond
 }
