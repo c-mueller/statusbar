@@ -19,9 +19,9 @@ package cpu
 import "time"
 
 var DefaultConfiguration = CPULoadConfiguration{
-	UpdateInterval:   1,
+	UpdateInterval:   500,
 	ShowAverageLoad:  true,
-	LoadAverageCount: 120,
+	LoadAverageCount: 240,
 }
 
 type CPUComponentBuilder struct{}

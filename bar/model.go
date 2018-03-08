@@ -36,6 +36,7 @@ type StatusBarComponentConfig struct {
 	Type                 string      `yaml:"type"`
 	CustomSeparator      bool        `yaml:"custom_separator"`
 	CustomSeparatorValue string      `yaml:"separator"`
+	HideInShortMode      bool        `yaml:"short_mode_hidden"`
 	Spec                 interface{} `yaml:"spec"`
 }
 

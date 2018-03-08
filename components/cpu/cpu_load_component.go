@@ -32,7 +32,7 @@ func (c *CPULoadComponent) Init() error {
 	c.currentValue = c.composeString()
 
 	//Build Tickers
-	c.cpuUpdateTicker = time.NewTicker(time.Duration(c.Config.UpdateInterval) * time.Second)
+	c.cpuUpdateTicker = time.NewTicker(time.Duration(c.Config.UpdateInterval) * time.Millisecond)
 
 	//Start Goroutines
 	go c.cpuUpdateHandler()

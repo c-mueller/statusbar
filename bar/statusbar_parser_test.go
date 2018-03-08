@@ -1,11 +1,11 @@
 package bar
 
 import (
-	"testing"
-	"os"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
+	"os"
 	"strings"
+	"testing"
 )
 
 func TestParse_Valid(t *testing.T) {

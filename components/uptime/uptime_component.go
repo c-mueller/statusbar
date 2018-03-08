@@ -17,10 +17,10 @@
 package uptime
 
 import (
-	"github.com/c-mueller/statusbar/bar/statusbarlib"
-	"time"
-	"github.com/shirou/gopsutil/host"
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/shirou/gopsutil/host"
+	"time"
 )
 
 var Builder = UptimeComponentBuilder{}

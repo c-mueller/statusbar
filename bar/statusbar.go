@@ -20,9 +20,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/op/go-logging"
 	"gopkg.in/yaml.v2"
 	"time"
-	"github.com/op/go-logging"
 )
 
 var log = logging.MustGetLogger("sb_builder")
@@ -97,8 +97,10 @@ func (bar *StatusBar) Init() error {
 	return nil
 }
 
-func (bar *StatusBar) RenderTerminal() error {
-	return bar.Render(&TerminalRenderer{})
+func (bar *StatusBar) RenderTerminal(short bool) error {
+	return bar.Render(&TerminalRenderer{
+		ShortMode: short,
+	})
 }
 
 func (bar *StatusBar) RenderI3() error {

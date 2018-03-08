@@ -19,6 +19,7 @@ components:
     type: Hostname
   - identifier: uptime_label
     type: Text
+    short_mode_hidden: true
     custom_separator: true
     separator: " "
     spec:
@@ -28,9 +29,9 @@ components:
   - identifier: cpu
     type: CPU
     spec:
-      update_interval: 1
+      update_interval: 500
       show_average_load: true
-      load_average_count: 120
+      load_average_count: 240
   - identifier: memory
     type: Memory
     spec:
@@ -39,11 +40,13 @@ components:
       show_bytes: true
   - identifier: date_message
     type: Text
+    short_mode_hidden: true
     custom_separator: true
     separator: " "
     spec:
       text: "TIME:"
   - identifier: date
+    short_mode_hidden: true
     custom_separator: true
     separator: " - "
     type: Date

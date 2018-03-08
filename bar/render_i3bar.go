@@ -31,9 +31,10 @@ type i3BarHeader struct {
 }
 
 type i3BarBlock struct {
-	Name     string `json:"name"`
-	Instance string `json:"instance"`
-	FullText string `json:"full_text"`
+	Name      string `json:"name"`
+	Instance  string `json:"instance"`
+	FullText  string `json:"full_text"`
+	ShortText string `json:"short_text"`
 }
 
 func (r *I3BarRenderer) writeHeader() {
@@ -56,27 +57,22 @@ func (r *I3BarRenderer) Render(bar *StatusBar) error {
 		//Begin new Block
 		fmt.Print(",[")
 
-		resultString := ""
+		longString := ""
+		shortString := ""
 		for i, v := range bar.components {
-			r, err := v.component.Render()
+			l, s, err := renderComponent(i, bar, v)
 			if err != nil {
 				return err
 			}
-
-			resultString += r
-			if i < len(bar.components)-1 {
-				if v.config.CustomSeparator {
-					resultString += v.config.CustomSeparatorValue
-				} else {
-					resultString += " | "
-				}
-			}
+			longString += l
+			shortString += s
 		}
 
 		block := i3BarBlock{
-			Name:     "block",
-			Instance: "block",
-			FullText: resultString,
+			Name:      "block",
+			Instance:  "block",
+			FullText:  longString,
+			ShortText: shortString,
 		}
 		obj, _ := json.Marshal(block)
 		fmt.Print(string(obj))

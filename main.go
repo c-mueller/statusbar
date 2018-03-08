@@ -22,8 +22,8 @@ import (
 
 	"fmt"
 	"github.com/c-mueller/statusbar/bar"
-	"gopkg.in/alecthomas/kingpin.v2"
 	"github.com/op/go-logging"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
@@ -31,8 +31,10 @@ var (
 	terminalMode = kingpin.Flag("terminal", "Render the Statusbar in Terminal Mode").Short('t').Bool()
 	i3wmMode     = kingpin.Flag("i3", "Render the Statusbar in i3wm Mode").Short('i').Bool()
 
-	verbose      = kingpin.Flag("verbose", "Print Verbose Information to Stderr").Short('v').Default("false").Bool()
-	debug        = kingpin.Flag("debug", "Print debug Information to Stderr (Includes verbose mode)").Short('d').Default("false").Bool()
+	short = kingpin.Flag("short", "Render Short version (Only works in Terminal mode)").Short('s').Default("false").Bool()
+
+	verbose = kingpin.Flag("verbose", "Print Verbose Information to Stderr").Short('v').Default("false").Bool()
+	debug   = kingpin.Flag("debug", "Print debug Information to Stderr (Includes verbose mode)").Short('d').Default("false").Bool()
 )
 
 var format = logging.MustStringFormatter(
@@ -86,7 +88,7 @@ func main() {
 
 	log.Debug("Rendering...")
 	if *terminalMode {
-		sb.RenderTerminal()
+		sb.RenderTerminal(*short)
 	} else if *i3wmMode {
 		sb.RenderI3()
 	}

@@ -27,6 +27,8 @@ import (
 	"github.com/c-mueller/statusbar/components/uptime"
 )
 
+const DefaultSeparator = " | "
+
 var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&cpu.Builder),
 	statusbarlib.ComponentBuilder(&text.Builder),
