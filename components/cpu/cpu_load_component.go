@@ -78,7 +78,7 @@ func (c *CPULoadComponent) composeString() string {
 
 func (c *CPULoadComponent) cpuUpdateHandler() {
 	for range c.cpuUpdateTicker.C {
-		data, _ := cpu.Percent(c.getRefreshDuration(), true)
+		data, _ := cpu.Percent(0, true)
 		avg := 0.0
 		for k, v := range data {
 			c.cpuLoads[k] = v

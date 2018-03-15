@@ -32,7 +32,10 @@ pipeline:
   test_and_benchmark:
     image: golang:${GO_VERSION}
     commands:
-      - go test -v -cover -bench=. -benchtime=10s ./...
+      - go test -race -coverprofile=profile.out -covermode=atomic -v -cover -bench=. -benchtime=10s ./...
+  codecov_report:
+    image: robertstettner/drone-codecov
+    secrets: [ codecov_token ]
   cloc_report:
     image: halive/git-cloc:latest
     commands:
