@@ -23,7 +23,7 @@ import (
 
 var log = logging.MustGetLogger("sb_builder")
 
-var DefaultConfiguration = Configuration{
+var DefaultConfig = Configuration{
 	InterfaceName:  "eth0",
 	RecentCount:    20,
 	UpdateInterval: 500,
@@ -37,8 +37,8 @@ type ComponentBuilder struct {
 type Component struct {
 	Config            Configuration
 	updateTicker      *time.Ticker
-	totalThroughput   *networkThroughput
-	recentThroughputs recentNetworkThroughputs
+	totalThroughput   *NetworkThroughput
+	recentThroughputs ThroughputList
 	id                string
 }
 
@@ -50,9 +50,9 @@ type Configuration struct {
 	ShowTotal      bool   `yaml:"show_total" mapstructure:"show_total"`
 }
 
-type networkThroughput struct {
+type NetworkThroughput struct {
 	In  uint64
 	Out uint64
 }
 
-type recentNetworkThroughputs []networkThroughput
+type ThroughputList []NetworkThroughput

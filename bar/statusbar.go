@@ -118,3 +118,7 @@ func (bar *StatusBar) Render(renderer RenderHandler) error {
 func (c *componentInstance) GetIdentifier() string {
 	return c.component.GetIdentifier()
 }
+
+func GetComponents() []statusbarlib.ComponentBuilder {
+	return builders
+}

@@ -26,4 +26,5 @@ type BarComponent interface {
 type ComponentBuilder interface {
 	BuildComponent(identifier string, data interface{}) (BarComponent, error)
 	GetDescriptor() string
+	GetDefaultConfig() interface{}
 }

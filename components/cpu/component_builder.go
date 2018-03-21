@@ -26,7 +26,7 @@ var Builder = ComponentBuilder{}
 func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
 	cfg := &Configuration{}
 	if i == nil {
-		cfg = &DefaultConfiguration
+		cfg = &DefaultConfig
 	} else {
 		var ic *Configuration
 		err := mapstructure.Decode(i, &ic)
@@ -45,4 +45,8 @@ func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (sta
 
 func (c *ComponentBuilder) GetDescriptor() string {
 	return "CPU"
+}
+
+func (c *ComponentBuilder) GetDefaultConfig() interface{} {
+	return DefaultConfig
 }

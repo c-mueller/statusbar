@@ -43,6 +43,10 @@ func (b *ComponentBuilder) GetDescriptor() string {
 	return "Hostname"
 }
 
+func (b *ComponentBuilder) GetDefaultConfig() interface{} {
+	return nil
+}
+
 func (c *Component) Init() error {
 	return nil
 }

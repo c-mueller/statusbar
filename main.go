@@ -24,17 +24,27 @@ import (
 	"github.com/c-mueller/statusbar/bar"
 	"github.com/op/go-logging"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"strings"
+	"gopkg.in/yaml.v2"
 )
 
 var (
-	configPath   = kingpin.Flag("config", "The Path to the Configuration file").Default("config.yml").Short('c').ExistingFile()
-	terminalMode = kingpin.Flag("terminal", "Render the Statusbar in Terminal Mode").Short('t').Bool()
-	i3wmMode     = kingpin.Flag("i3", "Render the Statusbar in i3wm Mode").Short('i').Bool()
-
-	short = kingpin.Flag("short", "Render Short version (Only works in Terminal mode)").Short('s').Default("false").Bool()
-
+	// Global Flags
 	verbose = kingpin.Flag("verbose", "Print Verbose Information to Stderr").Short('v').Default("false").Bool()
 	debug   = kingpin.Flag("debug", "Print debug Information to Stderr (Includes verbose mode)").Short('d').Default("false").Bool()
+
+	// Statusbar Sub Command
+	barSubCommand = kingpin.Command("run", "Run statusbar in default mode")
+	configPath    = barSubCommand.Flag("config", "The Path to the Configuration file").Default("config.yml").Short('c').ExistingFile()
+	terminalMode  = barSubCommand.Flag("terminal", "Render the Statusbar in Terminal Mode").Short('t').Bool()
+	short         = barSubCommand.Flag("short", "Render Short version (Only works in Terminal mode)").Short('s').Default("false").Bool()
+	i3wmMode      = barSubCommand.Flag("i3", "Render the Statusbar in i3wm Mode").Short('i').Bool()
+
+	componentSubCommand          = kingpin.Command("components", "Show Information about the Components shipped with 'statusbar'")
+	listComponentsSubCommand     = componentSubCommand.Command("list", "List the shipped Components")
+	printDefaultConfigSubCommand = componentSubCommand.Command("default-config", "Print the Default YAML config of a component")
+	commandNameArgument          = printDefaultConfigSubCommand.Flag("name", "The Name of the component").Short('n').Required().String()
+	wrappedFlag                  = printDefaultConfigSubCommand.Flag("wrap", "Print Complete Component Configuration").Short('w').Default("false").Bool()
 )
 
 var format = logging.MustStringFormatter(
@@ -44,8 +54,99 @@ var format = logging.MustStringFormatter(
 var log = logging.MustGetLogger("sb_main")
 
 func main() {
-	kingpin.Parse()
+	switch kingpin.Parse() {
+	case "run":
+		runStatusBar()
+	case "components list":
+		listComponents()
+	case "components default-config":
+		printDefaultConfig()
+	}
 
+}
+
+func printDefaultConfig() {
+	components := bar.GetComponents()
+	name := strings.ToLower(*commandNameArgument)
+	for _, v := range components {
+		if strings.ToLower(v.GetDescriptor()) == name {
+			config := v.GetDefaultConfig()
+			if config == nil {
+				fmt.Printf("The component %q does not have a Configuration", *commandNameArgument)
+				return
+			}
+			var yamlConfig []byte
+			var err error
+			if !*wrappedFlag {
+				yamlConfig, err = yaml.Marshal(config)
+
+			} else {
+				wrappedConfig := bar.StatusBarComponentConfig{
+					Identifier:           "my-identifier",
+					Type:                 v.GetDescriptor(),
+					CustomSeparator:      false,
+					HideInShortMode:      false,
+					Spec:                 config,
+					CustomSeparatorValue: "|",
+				}
+				yamlConfig, err = yaml.Marshal(wrappedConfig)
+			}
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(string(yamlConfig))
+			return
+		}
+	}
+	fmt.Printf("Component %q not found!\n", *commandNameArgument)
+	os.Exit(1)
+}
+
+func listComponents() {
+	components := bar.GetComponents()
+	fmt.Printf("Found %d Components:\n", len(components))
+	for _, v := range components {
+		fmt.Printf(" - %s\n", v.GetDescriptor())
+	}
+}
+
+func runStatusBar() {
+	initializeLogger()
+	if *terminalMode == *i3wmMode {
+		fmt.Println("The Application can either Run in i3wm (-i) or Terminal Mode (-t)!")
+		os.Exit(1)
+	}
+	log.Debugf("Reading Config from %q", *configPath)
+	f, err := os.Open(*configPath)
+	exitOnErr(err, 1, "Opening Configuration at %q has failed with an error", *configPath)
+
+	cfgbytes, err := ioutil.ReadAll(f)
+	exitOnErr(err, 1, "Opening Configuration at %q has failed with an error", *configPath)
+
+	sb, err := bar.BuildFromConfig(cfgbytes)
+	exitOnErr(err, 1, "Building the Statusbar with the configuration at %q has failed with an error", *configPath)
+
+	log.Debug("Initializing...")
+	err = sb.Init()
+	exitOnErr(err, 1, "Component Initialisation has failed!")
+
+	log.Debug("Rendering...")
+	if *terminalMode {
+		sb.RenderTerminal(*short)
+	} else if *i3wmMode {
+		sb.RenderI3()
+	}
+}
+
+func exitOnErr(err error, code int, format string, values ...interface{}) {
+	if err != nil {
+		log.Errorf(format, values...)
+		log.Errorf("Error Message: %q", err.Error())
+		os.Exit(code)
+	}
+}
+
+func initializeLogger() {
 	backend := logging.NewLogBackend(os.Stderr, "", 0)
 	backendFormatter := logging.NewBackendFormatter(backend, format)
 	leveledBackend := logging.AddModuleLevel(backendFormatter)
@@ -56,45 +157,6 @@ func main() {
 	} else {
 		leveledBackend.SetLevel(logging.ERROR, "")
 	}
-
 	logging.SetBackend(leveledBackend)
-
 	log.Debug("Parsed Command Line arguments")
-
-	if *terminalMode == *i3wmMode {
-		fmt.Println("The Application can either Run in i3wm or Terminal Mode!")
-		os.Exit(1)
-	}
-
-	log.Debugf("Reading Config from %q", *configPath)
-	f, err := os.Open(*configPath)
-	if err != nil {
-		log.Error("Opening the config file", *configPath, "has failed. Error Message:", err.Error())
-		os.Exit(1)
-	}
-	cfgbytes, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Error("Reading the config file", *configPath, "has failed. Error Message:", err.Error())
-		os.Exit(1)
-	}
-	sb, err := bar.BuildFromConfig(cfgbytes)
-	if err != nil {
-		log.Error("Building the Statusbar from the config file", *configPath, "has failed. Error Message:", err.Error())
-		os.Exit(1)
-	}
-
-	log.Debug("Initializing...")
-	err = sb.Init()
-	if err != nil {
-		log.Error("Component Initialisation failed!")
-		log.Error("Error Message:", err)
-		os.Exit(1)
-	}
-
-	log.Debug("Rendering...")
-	if *terminalMode {
-		sb.RenderTerminal(*short)
-	} else if *i3wmMode {
-		sb.RenderI3()
-	}
 }

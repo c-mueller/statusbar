@@ -65,6 +65,10 @@ func (b *ComponentBuilder) GetDescriptor() string {
 	return "Clock"
 }
 
+func (b *ComponentBuilder) GetDefaultConfig() interface{} {
+	return DefaultConfig
+}
+
 func (c *Component) Init() error {
 	return nil
 }

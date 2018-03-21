@@ -41,6 +41,9 @@ func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (sta
 func (b *ComponentBuilder) GetDescriptor() string {
 	return "Date"
 }
+func (b *ComponentBuilder) GetDefaultConfig() interface{} {
+	return nil
+}
 
 func (c *Component) Init() error {
 	return nil

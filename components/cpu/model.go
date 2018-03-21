@@ -18,7 +18,7 @@ package cpu
 
 import "time"
 
-var DefaultConfiguration = Configuration{
+var DefaultConfig = Configuration{
 	UpdateInterval:   500,
 	ShowAverageLoad:  true,
 	LoadAverageCount: 240,

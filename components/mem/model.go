@@ -16,7 +16,7 @@
 
 package mem
 
-var DefaultConfiguration = Configuration{
+var DefaultConfig = Configuration{
 	ShowSwap: false,
 }
 

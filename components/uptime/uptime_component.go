@@ -39,6 +39,10 @@ func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (sta
 	return statusbarlib.BarComponent(component), nil
 }
 
+func (b *ComponentBuilder) GetDefaultConfig() interface{} {
+	return nil
+}
+
 func (b *ComponentBuilder) GetDescriptor() string {
 	return "Uptime"
 }

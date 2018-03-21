@@ -30,7 +30,7 @@ var Builder = ComponentBuilder{}
 func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
 	cfg := &Configuration{}
 	if i == nil {
-		cfg = &DefaultConfiguration
+		cfg = &DefaultConfig
 	} else {
 		var ic *Configuration
 		err := mapstructure.Decode(i, &ic)
@@ -51,6 +51,10 @@ func (c *ComponentBuilder) GetDescriptor() string {
 	return "Network"
 }
 
+func (b *ComponentBuilder) GetDefaultConfig() interface{} {
+	return DefaultConfig
+}
+
 func (c *Component) Init() error {
 	if !c.Config.Global {
 		interfaces, err := net.Interfaces()
@@ -69,8 +73,8 @@ func (c *Component) Init() error {
 		}
 	}
 
-	c.recentThroughputs = make(recentNetworkThroughputs, 0)
-	c.totalThroughput = fromNetworkStats(c.getInterfaceStats())
+	c.recentThroughputs = make(ThroughputList, 0)
+	c.totalThroughput = FromNetworkStats(c.getInterfaceStats())
 
 	c.updateTicker = time.NewTicker(time.Duration(c.Config.UpdateInterval) * time.Millisecond)
 
@@ -80,12 +84,12 @@ func (c *Component) Init() error {
 }
 
 func (c *Component) Render() (string, error) {
-	avg := c.recentThroughputs.computeAverage().toSpeedPerSecond(c.Config.UpdateInterval)
+	avg := c.recentThroughputs.ComputeAverage().ToSpeedPerSecond(c.Config.UpdateInterval)
 
-	outputString := avg.formatToString()
+	outputString := avg.FormatToString()
 
 	if c.Config.ShowTotal {
-		outputString += fmt.Sprintf(" (%s)", c.totalThroughput.formatToString())
+		outputString += fmt.Sprintf(" (%s)", c.totalThroughput.FormatToString())
 	}
 
 	return outputString, nil
@@ -103,10 +107,10 @@ func (c *Component) GetIdentifier() string {
 func (c *Component) collect() {
 	for range c.updateTicker.C {
 		// Collect the Current Network Stats
-		current := fromNetworkStats(c.getInterfaceStats())
+		current := FromNetworkStats(c.getInterfaceStats())
 
 		// Calculate Difference
-		diff := current.subtract(c.totalThroughput)
+		diff := current.Subtract(c.totalThroughput)
 
 		// Append to Recent List
 		c.appendThroughputStats(diff)
@@ -116,11 +120,11 @@ func (c *Component) collect() {
 	}
 }
 
-func (c *Component) appendThroughputStats(t *networkThroughput) {
+func (c *Component) appendThroughputStats(t *NetworkThroughput) {
 	if len(c.recentThroughputs) < c.Config.RecentCount {
-		c.recentThroughputs = append(recentNetworkThroughputs{*t}, c.recentThroughputs...)
+		c.recentThroughputs = append(ThroughputList{*t}, c.recentThroughputs...)
 	} else {
-		c.recentThroughputs = append(recentNetworkThroughputs{*t}, c.recentThroughputs[:c.Config.RecentCount]...)
+		c.recentThroughputs = append(ThroughputList{*t}, c.recentThroughputs[:c.Config.RecentCount]...)
 	}
 }
 

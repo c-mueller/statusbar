@@ -23,43 +23,43 @@ import (
 	"strings"
 )
 
-func fromNetworkStats(stats net.IOCountersStat) *networkThroughput {
-	return &networkThroughput{
+func FromNetworkStats(stats net.IOCountersStat) *NetworkThroughput {
+	return &NetworkThroughput{
 		In:  stats.BytesRecv,
 		Out: stats.BytesSent,
 	}
 }
 
-func (a *networkThroughput) subtract(b *networkThroughput) *networkThroughput {
-	return &networkThroughput{
+func (a *NetworkThroughput) Subtract(b *NetworkThroughput) *NetworkThroughput {
+	return &NetworkThroughput{
 		In:  a.In - b.In,
 		Out: a.Out - b.Out,
 	}
 }
 
-func (a *networkThroughput) add(b *networkThroughput) *networkThroughput {
-	return &networkThroughput{
+func (a *NetworkThroughput) Add(b *NetworkThroughput) *NetworkThroughput {
+	return &NetworkThroughput{
 		In:  a.In + b.In,
 		Out: a.Out + b.Out,
 	}
 }
 
-func (a *networkThroughput) divide(v uint64) *networkThroughput {
-	return &networkThroughput{
+func (a *NetworkThroughput) Divide(v uint64) *NetworkThroughput {
+	return &NetworkThroughput{
 		In:  a.In / v,
 		Out: a.Out / v,
 	}
 }
 
-func (a *networkThroughput) toSpeedPerSecond(intervalMs int) *networkThroughput {
+func (a *NetworkThroughput) ToSpeedPerSecond(intervalMs int) *NetworkThroughput {
 	multiplier := float64(1000) / float64(intervalMs)
-	return &networkThroughput{
+	return &NetworkThroughput{
 		In:  uint64(float64(a.In) * multiplier),
 		Out: uint64(float64(a.Out) * multiplier),
 	}
 }
 
-func (a *networkThroughput) formatToString() string {
+func (a *NetworkThroughput) FormatToString() string {
 	// Format the String with '-' As padding '_' is used to define spaces in the result string
 	result := fmt.Sprintf("D:_%6s_U:_%6s", bytefmt.ByteSize(a.In), bytefmt.ByteSize(a.Out))
 	// Replace Spaces with '-' to get a output like --3.1G
@@ -68,13 +68,13 @@ func (a *networkThroughput) formatToString() string {
 	return strings.Replace(result, "_", " ", -1)
 }
 
-func (r recentNetworkThroughputs) computeAverage() *networkThroughput {
-	sum := &networkThroughput{In: 0, Out: 0}
+func (r ThroughputList) ComputeAverage() *NetworkThroughput {
+	sum := &NetworkThroughput{In: 0, Out: 0}
 	if len(r) == 0 {
 		return sum
 	}
 	for _, v := range r {
-		sum = sum.add(&v)
+		sum = sum.Add(&v)
 	}
-	return sum.divide(uint64(len(r)))
+	return sum.Divide(uint64(len(r)))
 }
