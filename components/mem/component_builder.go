@@ -21,21 +21,21 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-var Builder = MemoryComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-func (c *MemoryComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	cfg := &MemoryComponentConfig{}
+func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	cfg := &Configuration{}
 	if i == nil {
 		cfg = &DefaultConfiguration
 	} else {
-		var ic *MemoryComponentConfig
+		var ic *Configuration
 		err := mapstructure.Decode(i, &ic)
 		if err != nil {
 			return nil, err
 		}
 		cfg = ic
 	}
-	component := &MemoryComponent{
+	component := &Component{
 		Config: cfg,
 		id:     identifier,
 	}
@@ -43,6 +43,6 @@ func (c *MemoryComponentBuilder) BuildComponent(identifier string, i interface{}
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (c *MemoryComponentBuilder) GetDescriptor() string {
+func (c *ComponentBuilder) GetDescriptor() string {
 	return "Memory"
 }

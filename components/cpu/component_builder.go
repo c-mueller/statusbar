@@ -21,21 +21,21 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-var Builder = CPUComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-func (c *CPUComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	cfg := &CPULoadConfiguration{}
+func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	cfg := &Configuration{}
 	if i == nil {
 		cfg = &DefaultConfiguration
 	} else {
-		var ic *CPULoadConfiguration
+		var ic *Configuration
 		err := mapstructure.Decode(i, &ic)
 		if err != nil {
 			return nil, err
 		}
 		cfg = ic
 	}
-	component := &CPULoadComponent{
+	component := &Component{
 		Config: cfg,
 		id:     identifier,
 	}
@@ -43,6 +43,6 @@ func (c *CPUComponentBuilder) BuildComponent(identifier string, i interface{}) (
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (c *CPUComponentBuilder) GetDescriptor() string {
+func (c *ComponentBuilder) GetDescriptor() string {
 	return "CPU"
 }

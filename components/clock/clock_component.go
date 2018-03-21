@@ -23,29 +23,29 @@ import (
 	"time"
 )
 
-var DefaultConfig = ClockConfig{
+var DefaultConfig = Configuration{
 	Blink: true,
 }
 
-var Builder = ClockComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-type ClockComponentBuilder struct{}
+type ComponentBuilder struct{}
 
-type ClockConfig struct {
+type Configuration struct {
 	Blink bool `yaml:"blink" mapstructure:"blink"`
 }
 
-type ClockComponent struct {
-	Config ClockConfig
+type Component struct {
+	Config Configuration
 	id     string
 }
 
-func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	cfg := ClockConfig{}
+func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	cfg := Configuration{}
 	if i == nil {
 		cfg = DefaultConfig
 	} else {
-		var ic *ClockConfig
+		var ic *Configuration
 		err := mapstructure.Decode(i, &ic)
 		if err != nil {
 			return nil, err
@@ -53,7 +53,7 @@ func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{})
 		cfg = *ic
 	}
 
-	component := &ClockComponent{
+	component := &Component{
 		Config: cfg,
 		id:     identifier,
 	}
@@ -61,15 +61,15 @@ func (b *ClockComponentBuilder) BuildComponent(identifier string, i interface{})
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (b *ClockComponentBuilder) GetDescriptor() string {
+func (b *ComponentBuilder) GetDescriptor() string {
 	return "Clock"
 }
 
-func (c *ClockComponent) Init() error {
+func (c *Component) Init() error {
 	return nil
 }
 
-func (c *ClockComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	format := "%02d:%02d:%02d"
 	h, m, s := time.Now().Clock()
 	if (s%2) == 0 && c.Config.Blink {
@@ -78,10 +78,10 @@ func (c *ClockComponent) Render() (string, error) {
 	return fmt.Sprintf(format, h, m, s), nil
 }
 
-func (c *ClockComponent) Stop() error {
+func (c *Component) Stop() error {
 	return nil
 }
 
-func (c *ClockComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }

@@ -38,6 +38,13 @@ components:
       invert: true
       show_swap: true
       show_bytes: true
+  - identifier: lan
+    type: Network
+    spec:
+      update_interval: 500
+      interface_name: enp35s0
+      global: false
+      recent_count: 10
   - identifier: date_message
     type: Text
     short_mode_hidden: true

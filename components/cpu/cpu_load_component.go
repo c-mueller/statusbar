@@ -24,36 +24,36 @@ import (
 	"time"
 )
 
-func (c *CPULoadComponent) Init() error {
-	//Initialize Load Bar
+func (c *Component) Init() error {
+	// Initialize Load Bar
 	c.cpuLoads = make([]float64, runtime.NumCPU())
 	c.recentAverages = make([]float64, c.Config.LoadAverageCount)
 	c.updateTimestamp = time.Now()
 	c.currentValue = c.composeString()
 
-	//Build Tickers
+	// Build Tickers
 	c.cpuUpdateTicker = time.NewTicker(c.getRefreshDuration())
 
-	//Start Goroutines
+	// Start Goroutines
 	go c.cpuUpdateHandler()
 
 	return nil
 }
 
-func (c *CPULoadComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	return c.currentValue, nil
 }
 
-func (c *CPULoadComponent) Stop() error {
+func (c *Component) Stop() error {
 	c.cpuUpdateTicker.Stop()
 	return nil
 }
 
-func (c *CPULoadComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }
 
-func (c *CPULoadComponent) composeString() string {
+func (c *Component) composeString() string {
 	cpuLoads := "CPU: "
 	for i := 0; i < len(c.cpuLoads); i = i + 2 {
 		rightLoad := c.cpuLoads[i]
@@ -76,7 +76,7 @@ func (c *CPULoadComponent) composeString() string {
 	return cpuLoads
 }
 
-func (c *CPULoadComponent) cpuUpdateHandler() {
+func (c *Component) cpuUpdateHandler() {
 	for range c.cpuUpdateTicker.C {
 		data, _ := cpu.Percent(0, true)
 		avg := 0.0
@@ -102,6 +102,6 @@ func (c *CPULoadComponent) cpuUpdateHandler() {
 	}
 }
 
-func (c *CPULoadComponent) getRefreshDuration() time.Duration {
+func (c *Component) getRefreshDuration() time.Duration {
 	return time.Duration(c.Config.UpdateInterval) * time.Millisecond
 }

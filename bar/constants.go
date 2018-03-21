@@ -23,6 +23,7 @@ import (
 	"github.com/c-mueller/statusbar/components/date"
 	"github.com/c-mueller/statusbar/components/hostname"
 	"github.com/c-mueller/statusbar/components/mem"
+	"github.com/c-mueller/statusbar/components/net"
 	"github.com/c-mueller/statusbar/components/text"
 	"github.com/c-mueller/statusbar/components/uptime"
 )
@@ -37,4 +38,5 @@ var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&hostname.Builder),
 	statusbarlib.ComponentBuilder(&mem.Builder),
 	statusbarlib.ComponentBuilder(&uptime.Builder),
+	statusbarlib.ComponentBuilder(&net.Builder),
 }

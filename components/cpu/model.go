@@ -18,16 +18,16 @@ package cpu
 
 import "time"
 
-var DefaultConfiguration = CPULoadConfiguration{
+var DefaultConfiguration = Configuration{
 	UpdateInterval:   500,
 	ShowAverageLoad:  true,
 	LoadAverageCount: 240,
 }
 
-type CPUComponentBuilder struct{}
+type ComponentBuilder struct{}
 
-type CPULoadComponent struct {
-	Config          *CPULoadConfiguration
+type Component struct {
+	Config          *Configuration
 	id              string
 	cpuUpdateTicker *time.Ticker
 	cpuLoads        []float64
@@ -37,7 +37,7 @@ type CPULoadComponent struct {
 	currentAverage  float64
 }
 
-type CPULoadConfiguration struct {
+type Configuration struct {
 	UpdateInterval   int  `yaml:"update_interval" mapstructure:"update_interval"`
 	ShowAverageLoad  bool `yaml:"show_average_load" mapstructure:"show_average_load"`
 	LoadAverageCount int  `yaml:"load_average_count" mapstructure:"load_average_count"`

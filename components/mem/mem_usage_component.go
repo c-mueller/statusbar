@@ -21,13 +21,14 @@ import (
 	"fmt"
 	"github.com/c-mueller/statusbar/util"
 	"github.com/shirou/gopsutil/mem"
+	"strings"
 )
 
-func (c *MemoryComponent) Init() error {
+func (c *Component) Init() error {
 	return nil
 }
 
-func (c *MemoryComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	outputString := c.renderMemoryPercentage("MEM: ", getAvailableMemoryPercentage)
 
 	if c.Config.ShowSwap {
@@ -36,32 +37,34 @@ func (c *MemoryComponent) Render() (string, error) {
 	return outputString, nil
 }
 
-func (c *MemoryComponent) Stop() error {
+func (c *Component) Stop() error {
 	return nil
 }
 
-func (c *MemoryComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }
 
-func (c *MemoryComponent) renderMemoryPercentage(prefix string, f func(bool) (float64, uint64)) string {
+func (c *Component) renderMemoryPercentage(prefix string, f func(bool) (float64, uint64)) string {
 	outputString := ""
 	percentage, bytes := f(c.Config.InvertValues)
 	outputString += fmt.Sprintf("%s%02d%%", prefix, int(percentage))
 	if c.Config.ShowBytes && bytes != 0 {
-		outputString += fmt.Sprintf(" (%s)", bytefmt.ByteSize(bytes))
+		value := fmt.Sprintf("(%6s)", bytefmt.ByteSize(bytes))
+		value = strings.Replace(value, " ", "-", -1)
+		outputString += " " + value
 	}
 	return outputString
 }
 
 func getAvailableMemoryPercentage(invert bool) (float64, uint64) {
-	virt, _ := mem.VirtualMemory()
-	return getMemoryPercentage(virt.Available, virt.Total, invert)
+	virtualMemory, _ := mem.VirtualMemory()
+	return getMemoryPercentage(virtualMemory.Available, virtualMemory.Total, invert)
 }
 
 func getSwapMemoryPercentage(invert bool) (float64, uint64) {
-	swp, _ := mem.SwapMemory()
-	return getMemoryPercentage(swp.Free, swp.Total, invert)
+	swapMemory, _ := mem.SwapMemory()
+	return getMemoryPercentage(swapMemory.Free, swapMemory.Total, invert)
 }
 
 func getMemoryPercentage(free, total uint64, invert bool) (float64, uint64) {

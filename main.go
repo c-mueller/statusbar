@@ -84,7 +84,12 @@ func main() {
 	}
 
 	log.Debug("Initializing...")
-	sb.Init()
+	err = sb.Init()
+	if err != nil {
+		log.Error("Component Initialisation failed!")
+		log.Error("Error Message:", err)
+		os.Exit(1)
+	}
 
 	log.Debug("Rendering...")
 	if *terminalMode {

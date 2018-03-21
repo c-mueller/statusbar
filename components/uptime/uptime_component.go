@@ -23,31 +23,31 @@ import (
 	"time"
 )
 
-var Builder = UptimeComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-type UptimeComponentBuilder struct{}
+type ComponentBuilder struct{}
 
-type UptimeComponent struct {
+type Component struct {
 	id string
 }
 
-func (b *UptimeComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	component := &UptimeComponent{
+func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	component := &Component{
 		id: identifier,
 	}
 
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (b *UptimeComponentBuilder) GetDescriptor() string {
+func (b *ComponentBuilder) GetDescriptor() string {
 	return "Uptime"
 }
 
-func (c *UptimeComponent) Init() error {
+func (c *Component) Init() error {
 	return nil
 }
 
-func (c *UptimeComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	ut, err := getUptimeDuration()
 	if err != nil {
 		return "", err
@@ -55,11 +55,11 @@ func (c *UptimeComponent) Render() (string, error) {
 	return formatDuration(ut), nil
 }
 
-func (c *UptimeComponent) Stop() error {
+func (c *Component) Stop() error {
 	return nil
 }
 
-func (c *UptimeComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }
 

@@ -22,39 +22,39 @@ import (
 	"time"
 )
 
-var Builder = DateComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-type DateComponentBuilder struct{}
+type ComponentBuilder struct{}
 
-type DateComponent struct {
+type Component struct {
 	id string
 }
 
-func (b *DateComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	component := &DateComponent{
+func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	component := &Component{
 		id: identifier,
 	}
 
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (b *DateComponentBuilder) GetDescriptor() string {
+func (b *ComponentBuilder) GetDescriptor() string {
 	return "Date"
 }
 
-func (c *DateComponent) Init() error {
+func (c *Component) Init() error {
 	return nil
 }
 
-func (c *DateComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	y, m, d := time.Now().Date()
 	return fmt.Sprintf("%02d.%02d.%04d", d, int(m), y), nil
 }
 
-func (c *DateComponent) Stop() error {
+func (c *Component) Stop() error {
 	return nil
 }
 
-func (c *DateComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }

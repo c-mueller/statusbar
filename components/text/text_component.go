@@ -21,29 +21,29 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-var DefaultConfig = TextComponentConfig{
+var DefaultConfig = ComponentConfig{
 	Text: "My Message",
 }
 
-var Builder = TextComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-type TextComponentBuilder struct{}
+type ComponentBuilder struct{}
 
-type TextComponentConfig struct {
+type ComponentConfig struct {
 	Text string `yaml:"text" mapstructure:"text"`
 }
 
-type TextComponent struct {
-	Config TextComponentConfig
+type Component struct {
+	Config ComponentConfig
 	id     string
 }
 
-func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	cfg := TextComponentConfig{}
+func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	cfg := ComponentConfig{}
 	if i == nil {
 		cfg = DefaultConfig
 	} else {
-		var ic *TextComponentConfig
+		var ic *ComponentConfig
 		err := mapstructure.Decode(i, &ic)
 		if err != nil {
 			return nil, err
@@ -51,7 +51,7 @@ func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) 
 		cfg = *ic
 	}
 
-	component := &TextComponent{
+	component := &Component{
 		Config: cfg,
 		id:     identifier,
 	}
@@ -59,22 +59,22 @@ func (b *TextComponentBuilder) BuildComponent(identifier string, i interface{}) 
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (b *TextComponentBuilder) GetDescriptor() string {
+func (b *ComponentBuilder) GetDescriptor() string {
 	return "Text"
 }
 
-func (c *TextComponent) Init() error {
+func (c *Component) Init() error {
 	return nil
 }
 
-func (c *TextComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	return c.Config.Text, nil
 }
 
-func (c *TextComponent) Stop() error {
+func (c *Component) Stop() error {
 	return nil
 }
 
-func (c *TextComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }

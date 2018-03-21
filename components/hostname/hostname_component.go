@@ -23,46 +23,46 @@ import (
 	"os/user"
 )
 
-var Builder = HostnameComponentBuilder{}
+var Builder = ComponentBuilder{}
 
-type HostnameComponentBuilder struct{}
+type ComponentBuilder struct{}
 
-type HostnameComponent struct {
+type Component struct {
 	id string
 }
 
-func (b *HostnameComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	component := &HostnameComponent{
+func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+	component := &Component{
 		id: identifier,
 	}
 
 	return statusbarlib.BarComponent(component), nil
 }
 
-func (b *HostnameComponentBuilder) GetDescriptor() string {
+func (b *ComponentBuilder) GetDescriptor() string {
 	return "Hostname"
 }
 
-func (c *HostnameComponent) Init() error {
+func (c *Component) Init() error {
 	return nil
 }
 
-func (c *HostnameComponent) Render() (string, error) {
+func (c *Component) Render() (string, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return "", err
 	}
-	u, err := user.Current()
+	currentUser, err := user.Current()
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%s@%s", u.Username, hostname), nil
+	return fmt.Sprintf("%s@%s", currentUser.Username, hostname), nil
 }
 
-func (c *HostnameComponent) Stop() error {
+func (c *Component) Stop() error {
 	return nil
 }
 
-func (c *HostnameComponent) GetIdentifier() string {
+func (c *Component) GetIdentifier() string {
 	return c.id
 }

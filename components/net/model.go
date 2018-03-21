@@ -14,22 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package mem
+package net
+
+import (
+	"github.com/op/go-logging"
+	"time"
+)
+
+var log = logging.MustGetLogger("sb_builder")
 
 var DefaultConfiguration = Configuration{
-	ShowSwap: false,
+	InterfaceName:  "eth0",
+	RecentCount:    20,
+	UpdateInterval: 500,
+	Global:         true,
+	ShowTotal:      false,
 }
 
 type ComponentBuilder struct {
 }
 
 type Component struct {
-	Config *Configuration
-	id     string
+	Config            Configuration
+	updateTicker      *time.Ticker
+	totalThroughput   *networkThroughput
+	recentThroughputs recentNetworkThroughputs
+	id                string
 }
 
 type Configuration struct {
-	ShowSwap     bool `yaml:"show_swap" mapstructure:"show_swap"`
-	ShowBytes    bool `yaml:"show_bytes" mapstructure:"show_bytes"`
-	InvertValues bool `yaml:"invert" mapstructure:"invert"`
+	InterfaceName  string `yaml:"interface_name" mapstructure:"interface_name"`
+	UpdateInterval int    `yaml:"update_interval" mapstructure:"update_interval"`
+	RecentCount    int    `yaml:"recent_count" mapstructure:"recent_count"`
+	Global         bool   `yaml:"global" mapstructure:"global"`
+	ShowTotal      bool   `yaml:"show_total" mapstructure:"show_total"`
 }
+
+type networkThroughput struct {
+	In  uint64
+	Out uint64
+}
+
+type recentNetworkThroughputs []networkThroughput
