@@ -17,6 +17,7 @@
 package net
 
 import (
+	"github.com/c-mueller/statusbar/components/net/netlib"
 	"github.com/op/go-logging"
 	"time"
 )
@@ -37,8 +38,8 @@ type ComponentBuilder struct {
 type Component struct {
 	Config            Configuration
 	updateTicker      *time.Ticker
-	totalThroughput   *NetworkThroughput
-	recentThroughputs ThroughputList
+	totalThroughput   *netlib.NetworkThroughput
+	recentThroughputs netlib.ThroughputList
 	id                string
 }
 
@@ -49,10 +50,3 @@ type Configuration struct {
 	Global         bool   `yaml:"global" mapstructure:"global"`
 	ShowTotal      bool   `yaml:"show_total" mapstructure:"show_total"`
 }
-
-type NetworkThroughput struct {
-	In  uint64
-	Out uint64
-}
-
-type ThroughputList []NetworkThroughput

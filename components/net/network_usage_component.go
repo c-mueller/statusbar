@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/c-mueller/statusbar/components/net/netlib"
 	"github.com/mitchellh/mapstructure"
 	"github.com/shirou/gopsutil/net"
 	"time"
@@ -73,8 +74,8 @@ func (c *Component) Init() error {
 		}
 	}
 
-	c.recentThroughputs = make(ThroughputList, 0)
-	c.totalThroughput = FromNetworkStats(c.getInterfaceStats())
+	c.recentThroughputs = make(netlib.ThroughputList, 0)
+	c.totalThroughput = netlib.FromNetworkStats(c.getInterfaceStats())
 
 	c.updateTicker = time.NewTicker(time.Duration(c.Config.UpdateInterval) * time.Millisecond)
 
@@ -107,7 +108,7 @@ func (c *Component) GetIdentifier() string {
 func (c *Component) collect() {
 	for range c.updateTicker.C {
 		// Collect the Current Network Stats
-		current := FromNetworkStats(c.getInterfaceStats())
+		current := netlib.FromNetworkStats(c.getInterfaceStats())
 
 		// Calculate Difference
 		diff := current.Subtract(c.totalThroughput)
@@ -120,11 +121,11 @@ func (c *Component) collect() {
 	}
 }
 
-func (c *Component) appendThroughputStats(t *NetworkThroughput) {
+func (c *Component) appendThroughputStats(t *netlib.NetworkThroughput) {
 	if len(c.recentThroughputs) < c.Config.RecentCount {
-		c.recentThroughputs = append(ThroughputList{*t}, c.recentThroughputs...)
+		c.recentThroughputs = append(netlib.ThroughputList{*t}, c.recentThroughputs...)
 	} else {
-		c.recentThroughputs = append(ThroughputList{*t}, c.recentThroughputs[:c.Config.RecentCount]...)
+		c.recentThroughputs = append(netlib.ThroughputList{*t}, c.recentThroughputs[:c.Config.RecentCount]...)
 	}
 }
 
