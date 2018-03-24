@@ -74,78 +74,35 @@ func (c *Component) Init() error {
 		}
 	}
 
-	c.recentThroughputs = make(netlib.ThroughputList, 0)
-	c.totalThroughput = netlib.FromNetworkStats(c.getInterfaceStats())
+	c.collector = &netlib.ThroughputLogger{
+		UpdateInterval:   time.Duration(c.Config.UpdateInterval) * time.Millisecond,
+		Global:           c.Config.Global,
+		InterfaceName:    c.Config.InterfaceName,
+		StoredValueCount: c.Config.RecentCount,
+	}
 
-	c.updateTicker = time.NewTicker(time.Duration(c.Config.UpdateInterval) * time.Millisecond)
-
-	go c.collect()
+	c.collector.Start()
 
 	return nil
 }
 
 func (c *Component) Render() (string, error) {
-	avg := c.recentThroughputs.ComputeAverage().ToSpeedPerSecond(c.Config.UpdateInterval)
+	avg := c.collector.RecentMeasurements.ComputeAverage().ToSpeedPerSecond(c.Config.UpdateInterval)
 
 	outputString := avg.FormatToString()
 
 	if c.Config.ShowTotal {
-		outputString += fmt.Sprintf(" (%s)", c.totalThroughput.FormatToString())
+		outputString += fmt.Sprintf(" (%s)", c.collector.LastMeasurement.FormatToString())
 	}
 
 	return outputString, nil
 }
 
 func (c *Component) Stop() error {
-	c.updateTicker.Stop()
+	c.collector.Stop()
 	return nil
 }
 
 func (c *Component) GetIdentifier() string {
 	return c.id
-}
-
-func (c *Component) collect() {
-	for range c.updateTicker.C {
-		// Collect the Current Network Stats
-		current := netlib.FromNetworkStats(c.getInterfaceStats())
-
-		// Calculate Difference
-		diff := current.Subtract(c.totalThroughput)
-
-		// Append to Recent List
-		c.appendThroughputStats(diff)
-
-		// Store Latest value
-		c.totalThroughput = current
-	}
-}
-
-func (c *Component) appendThroughputStats(t *netlib.NetworkThroughput) {
-	if len(c.recentThroughputs) < c.Config.RecentCount {
-		c.recentThroughputs = append(netlib.ThroughputList{*t}, c.recentThroughputs...)
-	} else {
-		c.recentThroughputs = append(netlib.ThroughputList{*t}, c.recentThroughputs[:c.Config.RecentCount]...)
-	}
-}
-
-func (c *Component) getInterfaceStats() net.IOCountersStat {
-	stats, err := net.IOCounters(!c.Config.Global)
-
-	if err != nil {
-		log.Error("Collecting Network Data has failed:", err)
-		panic(err)
-	}
-
-	if c.Config.Global {
-		return stats[0]
-	} else {
-		for _, v := range stats {
-			if v.Name == c.Config.InterfaceName {
-				return v
-			}
-		}
-		log.Errorf("Invalid interface %q!", c.Config.InterfaceName)
-		panic("Network Interface is not existing anymore!")
-	}
 }

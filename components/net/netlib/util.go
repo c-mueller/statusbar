@@ -78,3 +78,10 @@ func (r ThroughputList) ComputeAverage() *NetworkThroughput {
 	}
 	return sum.Divide(uint64(len(r)))
 }
+
+func (r *NetworkThroughput) ToBit() NetworkThroughput {
+	return NetworkThroughput{
+		In:  r.In * 8,
+		Out: r.Out * 8,
+	}
+}

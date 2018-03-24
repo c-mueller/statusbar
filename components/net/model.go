@@ -19,7 +19,6 @@ package net
 import (
 	"github.com/c-mueller/statusbar/components/net/netlib"
 	"github.com/op/go-logging"
-	"time"
 )
 
 var log = logging.MustGetLogger("sb_builder")
@@ -36,11 +35,9 @@ type ComponentBuilder struct {
 }
 
 type Component struct {
-	Config            Configuration
-	updateTicker      *time.Ticker
-	totalThroughput   *netlib.NetworkThroughput
-	recentThroughputs netlib.ThroughputList
-	id                string
+	Config    Configuration
+	collector *netlib.ThroughputLogger
+	id        string
 }
 
 type Configuration struct {

@@ -45,6 +45,7 @@ components:
       interface_name: enp35s0
       global: false
       recent_count: 10
+      show_total: true
   - identifier: date_message
     type: Text
     short_mode_hidden: true
