@@ -40,3 +40,9 @@ var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&uptime.Builder),
 	statusbarlib.ComponentBuilder(&net.Builder),
 }
+
+var renderHandlers = []RenderHandler{
+	NewTerminalRenderer(false),
+	NewTerminalRenderer(true),
+	&I3BarRenderer{},
+}

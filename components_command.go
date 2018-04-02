@@ -26,22 +26,27 @@ import (
 )
 
 var (
-	componentSubCommand      = kingpin.Command("components", "Show Information about the Components shipped with 'statusbar'")
-	listComponentsSubCommand = componentSubCommand.Command("list", "List the shipped Components")
+	componentCmd = kingpin.Command("components",
+		"Show Information about the components shipped with 'statusbar'")
+	listComponentsCmd = componentCmd.Command("list",
+		"List the shipped components")
 
-	printDefaultConfigSubCommand = componentSubCommand.Command("default-config", "Print the Default YAML config of a component")
-	commandNameFlag              = printDefaultConfigSubCommand.Flag("name", "The Name of the component").Short('n').Required().String()
-	wrappedFlag                  = printDefaultConfigSubCommand.Flag("wrap", "Print Complete Component Configuration").Short('w').Default("false").Bool()
+	printDefaultCfgCmd = componentCmd.Command("default-config",
+		"Print the default YAML config of a component").Alias("cfg")
+	commandNameArg = printDefaultCfgCmd.Arg("name",
+		"The Name of the component").Required().String()
+	wrappedFlag = printDefaultCfgCmd.Flag("wrap",
+		"Print complete component configuration (with defaults)").Short('w').Default("false").Bool()
 )
 
 func printDefaultConfig() {
 	components := bar.GetComponents()
-	name := strings.ToLower(*commandNameFlag)
+	name := strings.ToLower(*commandNameArg)
 	for _, v := range components {
 		if strings.ToLower(v.GetDescriptor()) == name {
 			config := v.GetDefaultConfig()
 			if config == nil {
-				fmt.Printf("The component %q does not have a Configuration", *commandNameFlag)
+				fmt.Printf("The component %q does not have a Configuration", *commandNameArg)
 				return
 			}
 			var yamlConfig []byte
@@ -67,7 +72,7 @@ func printDefaultConfig() {
 			return
 		}
 	}
-	fmt.Printf("Component %q not found!\n", *commandNameFlag)
+	fmt.Printf("Component %q not found!\n", *commandNameArg)
 	os.Exit(1)
 }
 

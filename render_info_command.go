@@ -17,26 +17,21 @@
 package main
 
 import (
+	"fmt"
+	"github.com/c-mueller/statusbar/bar"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+const rendererListFormat = "%-20s %-100s\n"
+
 var (
-	// Global Flags
-	verbose = kingpin.Flag("verbose",
-		"Print verbose information to stderr").Short('v').Default("false").Bool()
-	debug = kingpin.Flag("debug",
-		"Print debug information to stderr (includes verbose mode)").Short('d').Default("false").Bool()
+	rendererCmd = kingpin.Command("renderer",
+		"List all available rendering engines")
 )
 
-func main() {
-	switch kingpin.Parse() {
-	case "run":
-		runStatusBar()
-	case "components list":
-		listComponents()
-	case "components default-config":
-		printDefaultConfig()
-	case "renderer":
-		listRenderer()
+func listRenderer() {
+	fmt.Printf(rendererListFormat, "NAME", "DESCRIPTION")
+	for _, v := range bar.GetRenderer() {
+		fmt.Printf(rendererListFormat, v.GetName(), v.GetDescription())
 	}
 }

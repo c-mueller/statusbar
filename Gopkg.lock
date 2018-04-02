@@ -74,6 +74,12 @@
   version = "1.0.0"
 
 [[projects]]
+  name = "github.com/op/go-logging"
+  packages = ["."]
+  revision = "b2cb9fa56473e98db8caba80237377e83fe44db5"
+  version = "v1"
+
+[[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
@@ -83,8 +89,11 @@
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
+    "host",
     "internal/common",
-    "mem"
+    "mem",
+    "net",
+    "process"
   ]
   revision = "c432be29ccce470088d07eea25b3ea7e68a8afbb"
   version = "v2.18.01"
@@ -119,6 +128,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "938631bc2cc39d92ad3e0b8156b77d1dc04893b7f8ab0d77122027402bea27fb"
+  inputs-digest = "8aff049c09901e730915fb9b6307d14808f848ce379e0c8103c4df9b4aa68496"
   solver-name = "gps-cdcl"
   solver-version = 1

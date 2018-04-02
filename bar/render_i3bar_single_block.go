@@ -22,6 +22,11 @@ import (
 	"time"
 )
 
+const (
+	i3barSingleBlockRenderName        = "i3"
+	i3barSingleBlockRenderDescription = "Render the statusbar in i3bar mode (single block)"
+)
+
 type I3BarRenderer struct {
 }
 
@@ -90,4 +95,12 @@ func (r *I3BarRenderer) Init(sb *StatusBar) error {
 	log.Debug("Initializing i3wm renderer")
 	r.writeHeader()
 	return nil
+}
+
+func (r *I3BarRenderer) GetName() string {
+	return i3barSingleBlockRenderName
+}
+
+func (r *I3BarRenderer) GetDescription() string {
+	return i3barSingleBlockRenderDescription
 }

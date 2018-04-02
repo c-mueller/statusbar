@@ -17,46 +17,58 @@
 package main
 
 import (
-	"fmt"
 	"github.com/c-mueller/statusbar/bar"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
 	"os"
 )
 
+const (
+	configFileOpenErrorFormat   = "Opening Configuration at %q has failed with an error"
+	statusBarInitErrorFormat    = "Building the statusbar with the configuration at %q has failed with an error"
+	componentInitErrorFormat    = "Component Initialisation has failed!"
+	renderingFailureErrorFormat = "Rendering Failed"
+
+	renderingEngineNotFoundMessageFormat = "Renderer %q not found!"
+)
+
 var (
+	// Default Config path
+	defaultConfigPath = os.Getenv("HOME") + "/.statusbar-config.yml"
+
 	// Statusbar Sub Command
-	barSubCommand = kingpin.Command("run", "Run statusbar in default mode")
-	configPath    = barSubCommand.Flag("config", "The Path to the Configuration file").Default("config.yml").Short('c').ExistingFile()
-	terminalMode  = barSubCommand.Flag("terminal", "Render the Statusbar in Terminal Mode").Short('t').Bool()
-	short         = barSubCommand.Flag("short", "Render Short version (Only works in Terminal mode)").Short('s').Default("false").Bool()
-	i3wmMode      = barSubCommand.Flag("i3", "Render the Statusbar in i3wm Mode").Short('i').Bool()
+	runCommand = kingpin.Command("run",
+		"Run statusbar in default (single process) mode").Alias("r").Alias("show")
+	configPath = runCommand.Flag("config",
+		"The Path to the Configuration file").Default(defaultConfigPath).Short('c').ExistingFile()
+	modeArg = runCommand.Arg("renderer",
+		"The name of the renderer (use 'statusbar renderer' to list all rendering engines)").Default("terminal").String()
 )
 
 func runStatusBar() {
 	initializeLogger()
-	if *terminalMode == *i3wmMode {
-		fmt.Println("The Application can either Run in i3wm (-i) or Terminal Mode (-t)!")
+
+	renderer := findRenderer(*modeArg)
+	if renderer == nil {
+		log.Errorf(renderingEngineNotFoundMessageFormat, *modeArg)
 		os.Exit(1)
 	}
+
 	log.Debugf("Reading Config from %q", *configPath)
-	f, err := os.Open(*configPath)
-	exitOnErr(err, 1, "Opening Configuration at %q has failed with an error", *configPath)
+	configFile, err := os.Open(*configPath)
+	exitOnErr(err, 1, configFileOpenErrorFormat, *configPath)
 
-	cfgbytes, err := ioutil.ReadAll(f)
-	exitOnErr(err, 1, "Opening Configuration at %q has failed with an error", *configPath)
+	readConfigBytes, err := ioutil.ReadAll(configFile)
+	exitOnErr(err, 1, configFileOpenErrorFormat, *configPath)
 
-	sb, err := bar.BuildFromConfig(cfgbytes)
-	exitOnErr(err, 1, "Building the Statusbar with the configuration at %q has failed with an error", *configPath)
+	statusBar, err := bar.BuildFromConfig(readConfigBytes)
+	exitOnErr(err, 1, statusBarInitErrorFormat, *configPath)
 
 	log.Debug("Initializing...")
-	err = sb.Init()
-	exitOnErr(err, 1, "Component Initialisation has failed!")
+	err = statusBar.Init()
+	exitOnErr(err, 1, componentInitErrorFormat)
 
 	log.Debug("Rendering...")
-	if *terminalMode {
-		sb.RenderTerminal(*short)
-	} else if *i3wmMode {
-		sb.RenderI3()
-	}
+	err = statusBar.Render(renderer)
+	exitOnErr(err, 1, renderingFailureErrorFormat)
 }

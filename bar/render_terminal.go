@@ -21,8 +21,31 @@ import (
 	"time"
 )
 
+const (
+	terminalRendererName             = "terminal"
+	terminalRendererDescription      = "Render the statusbar within the terminal, in long mode (all components)."
+	terminalRendererNameShort        = "terminal-short"
+	terminalRendererDescriptionShort = "Render the statusbar within the terminal, in short mode (only enabled components)."
+)
+
 type TerminalRenderer struct {
-	ShortMode bool
+	ShortMode   bool
+	Name        string
+	Description string
+}
+
+func NewTerminalRenderer(short bool) *TerminalRenderer {
+	name := terminalRendererName
+	description := terminalRendererDescription
+	if short {
+		name = terminalRendererNameShort
+		description = terminalRendererDescriptionShort
+	}
+	return &TerminalRenderer{
+		ShortMode:   short,
+		Name:        name,
+		Description: description,
+	}
 }
 
 func (t *TerminalRenderer) Render(bar *StatusBar) error {
@@ -60,4 +83,12 @@ func (t *TerminalRenderer) Render(bar *StatusBar) error {
 func (t *TerminalRenderer) Init(sb *StatusBar) error {
 	log.Debug("Initializing terminal renderer")
 	return nil
+}
+
+func (t *TerminalRenderer) GetName() string {
+	return t.Name
+}
+
+func (t *TerminalRenderer) GetDescription() string {
+	return t.Description
 }

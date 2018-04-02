@@ -17,8 +17,10 @@ package main
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import (
+	"github.com/c-mueller/statusbar/bar"
 	"github.com/op/go-logging"
 	"os"
+	"strings"
 )
 
 var format = logging.MustStringFormatter(
@@ -48,4 +50,13 @@ func initializeLogger() {
 	}
 	logging.SetBackend(leveledBackend)
 	log.Debug("Parsed Command Line arguments")
+}
+
+func findRenderer(name string) bar.RenderHandler {
+	for _, v := range bar.GetRenderer() {
+		if strings.ToLower(name) == strings.ToLower(v.GetName()) {
+			return v
+		}
+	}
+	return nil
 }

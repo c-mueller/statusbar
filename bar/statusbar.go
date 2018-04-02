@@ -122,3 +122,7 @@ func (c *componentInstance) GetIdentifier() string {
 func GetComponents() []statusbarlib.ComponentBuilder {
 	return builders
 }
+
+func GetRenderer() []RenderHandler {
+	return renderHandlers
+}
