@@ -72,6 +72,7 @@ components:
               type: Command
               spec:
                 command: "playerctl status"
+                error_message: "Unknown"
                 execution_interval: 1000
             - identifier: plctl_artist
               custom_separator: true
@@ -79,11 +80,13 @@ components:
               type: Command
               spec:
                 command: "playerctl metadata artist"
+                error_message: "XXX"
                 execution_interval: 1000
             - identifier: plctl_title
               type: Command
               spec:
                 command: "playerctl metadata title"
+                error_message: "XXX"
                 execution_interval: 1000
   - identifier: time_block
     type: Block

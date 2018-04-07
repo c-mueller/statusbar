@@ -24,6 +24,7 @@ import (
 
 type CommandRunner struct {
 	UpdateInterval time.Duration
+	ErrorMessage   string
 	Command        string
 	lastValue      string
 	updateTicker   *time.Ticker
@@ -63,7 +64,11 @@ func (c *CommandRunner) runCommand() {
 
 	data, err := cmd.Output()
 	if err != nil {
-		c.lastValue = err.Error()
+		if c.ErrorMessage != "" {
+			c.lastValue = c.ErrorMessage
+		} else  {
+			c.lastValue = err.Error()
+		}
 		return
 	}
 

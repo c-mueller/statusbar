@@ -25,6 +25,7 @@ import (
 var Builder = CommandBuilder{}
 var DefaultConfig = Config{
 	Command:           "echo \"Hello World!\"",
+	ErrorMessage:      "Command Failed!",
 	ExecutionInterval: 6000,
 }
 
@@ -39,6 +40,7 @@ type Component struct {
 
 type Config struct {
 	Command           string `yaml:"command" mapstructure:"command"`
+	ErrorMessage      string `yaml:"error_message" mapstructure:"error_message"`
 	ExecutionInterval int    `yaml:"execution_interval" mapstructure:"execution_interval"`
 }
 
@@ -70,6 +72,7 @@ func (c *CommandBuilder) GetDefaultConfig() interface{} {
 
 func (c *Component) Init() error {
 	c.commandRunner = NewCommandRunner(c.Config.Command, time.Duration(c.Config.ExecutionInterval)*time.Millisecond)
+	c.commandRunner.ErrorMessage = c.Config.ErrorMessage
 	c.commandRunner.Start()
 	return nil
 }
