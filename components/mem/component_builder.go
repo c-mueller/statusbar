@@ -23,7 +23,7 @@ import (
 
 var Builder = ComponentBuilder{}
 
-func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}, builders []statusbarlib.ComponentBuilder) (statusbarlib.BarComponent, error) {
 	cfg := &Configuration{}
 	if i == nil {
 		cfg = &DefaultConfig

@@ -18,6 +18,7 @@ package main
 
 import (
 	"github.com/c-mueller/statusbar/bar"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/op/go-logging"
 	"os"
 	"strings"
@@ -52,7 +53,7 @@ func initializeLogger() {
 	log.Debug("Parsed command line arguments")
 }
 
-func findRenderer(name string) bar.RenderHandler {
+func findRenderer(name string) statusbarlib.RenderHandler {
 	for _, v := range bar.GetRenderer() {
 		if strings.ToLower(name) == strings.ToLower(v.GetName()) {
 			return v

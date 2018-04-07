@@ -16,6 +16,10 @@
 
 package statusbarlib
 
+import (
+	"time"
+)
+
 type BarComponent interface {
 	GetIdentifier() string
 	Init() error
@@ -24,7 +28,21 @@ type BarComponent interface {
 }
 
 type ComponentBuilder interface {
-	BuildComponent(identifier string, data interface{}) (BarComponent, error)
+	BuildComponent(identifier string, data interface{}, builders []ComponentBuilder) (BarComponent, error)
 	GetDescriptor() string
 	GetDefaultConfig() interface{}
+}
+
+type RenderHandler interface {
+	Init(bar StatusBar) error
+	Render(bar StatusBar) error
+	GetName() string
+	GetDescription() string
+}
+
+type StatusBar interface {
+	Render(renderer RenderHandler) error
+	Init() error
+	GetComponents() ComponentInstances
+	GetRefreshInterval() time.Duration
 }

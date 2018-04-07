@@ -19,6 +19,7 @@ package main
 import (
 	"fmt"
 	"github.com/c-mueller/statusbar/bar"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"gopkg.in/yaml.v2"
 	"os"
@@ -55,7 +56,7 @@ func printDefaultConfig() {
 				yamlConfig, err = yaml.Marshal(config)
 
 			} else {
-				wrappedConfig := bar.Component{
+				wrappedConfig := statusbarlib.Component{
 					Identifier:           "my-identifier",
 					Type:                 v.GetDescriptor(),
 					CustomSeparator:      false,

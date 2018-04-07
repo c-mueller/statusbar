@@ -38,7 +38,7 @@ type Component struct {
 	id     string
 }
 
-func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+func (b *ComponentBuilder) BuildComponent(identifier string, i interface{}, builders []statusbarlib.ComponentBuilder) (statusbarlib.BarComponent, error) {
 	cfg := ComponentConfig{}
 	if i == nil {
 		cfg = DefaultConfig

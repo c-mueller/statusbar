@@ -24,7 +24,7 @@ import (
 
 var ChartBuilder = AvgChartBuilder{}
 
-func (c *AvgChartBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+func (c *AvgChartBuilder) BuildComponent(identifier string, i interface{}, builders []statusbarlib.ComponentBuilder) (statusbarlib.BarComponent, error) {
 	cfg := &DefaultAvgChartConfig
 	if i != nil {
 		var ic *AvgChartConfig

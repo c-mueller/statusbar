@@ -14,11 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package i3
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"time"
 )
 
@@ -30,9 +31,9 @@ const (
 type I3MultiBlockRenderer struct {
 }
 
-func (r *I3MultiBlockRenderer) Render(bar *StatusBar) error {
-	for _, v := range bar.components {
-		defer v.component.Stop()
+func (r *I3MultiBlockRenderer) Render(bar statusbarlib.StatusBar) error {
+	for _, v := range bar.GetComponents() {
+		defer v.Component.Stop()
 	}
 
 	//Send Array Opening Bracket
@@ -41,22 +42,24 @@ func (r *I3MultiBlockRenderer) Render(bar *StatusBar) error {
 		//Begin new Block
 		fmt.Print(",[")
 
-		for idx, v := range bar.components {
+		components := bar.GetComponents()
 
-			d, err := v.component.Render()
+		for idx, v := range components {
+
+			d, err := v.Component.Render()
 			if err != nil {
 				return err
 			}
 
 			block := i3BarBlock{
-				Name:      v.id,
-				Instance:  v.id,
+				Name:      v.Identifier,
+				Instance:  v.Identifier,
 				FullText:  d.LongText,
 				ShortText: d.ShortText,
 			}
 			obj, _ := json.Marshal(block)
 			fmt.Print(string(obj))
-			if idx != len(bar.components)-1 {
+			if idx != len(components)-1 {
 				fmt.Print(", ")
 			}
 		}
@@ -65,12 +68,12 @@ func (r *I3MultiBlockRenderer) Render(bar *StatusBar) error {
 		fmt.Println("]")
 
 		//Wait for next refresh
-		time.Sleep(bar.RefreshInterval)
+		time.Sleep(bar.GetRefreshInterval())
 	}
 	return nil
 }
 
-func (r *I3MultiBlockRenderer) Init(sb *StatusBar) error {
+func (r *I3MultiBlockRenderer) Init(sb statusbarlib.StatusBar) error {
 	log.Debug("Initializing i3wm renderer")
 	writeI3BarHeader()
 	return nil

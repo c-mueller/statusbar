@@ -1,7 +1,25 @@
+// statusbar - (https://github.com/c-mueller/statusbar)
+// Copyright (c) 2018 Christian Müller <cmueller.dev@gmail.com>.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 package bar
 
 import (
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/c-mueller/statusbar/components/block"
 	"github.com/c-mueller/statusbar/components/text"
 	"github.com/op/go-logging"
 	"github.com/stretchr/testify/assert"
@@ -24,8 +42,8 @@ func TestParse_Valid(t *testing.T) {
 	sb, err := BuildFromConfig(content)
 	assert.NoError(t, err)
 
-	assert.Equal(t, 4, len(sb.components))
-	assert.Equal(t, "hostname", sb.components[0].id)
+	assert.Equal(t, 4, len(sb.Components))
+	assert.Equal(t, "hostname", sb.Components[0].Identifier)
 }
 
 func TestParse_Invalid_UnknownType(t *testing.T) {
@@ -71,11 +89,11 @@ func TestBlock_Build(t *testing.T) {
 
 func TestMarshall_Block(t *testing.T) {
 	initLogger()
-	block := Component{
+	block := statusbarlib.Component{
 		Identifier: "block",
 		Type:       "Block",
-		Spec: BlockConfig{
-			Components: []Component{
+		Spec: block.BlockConfig{
+			Components: []statusbarlib.Component{
 				{
 					Identifier: "label",
 					Type:       "Text",

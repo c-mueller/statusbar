@@ -20,3 +20,26 @@ type RenderingOutput struct {
 	LongText  string `json:"long_text" yaml:"long_text" mapstructure:"long_text"`
 	ShortText string `json:"short_text" yaml:"short_text" mapstructure:"short_text"`
 }
+
+type Config struct {
+	RefreshInterval int        `yaml:"refresh_interval"`
+	Components      Components `yaml:"components"`
+}
+
+type Component struct {
+	Identifier           string      `yaml:"identifier" mapstructure:"identifier"`
+	Type                 string      `yaml:"type" mapstructure:"type"`
+	CustomSeparator      bool        `yaml:"custom_separator" mapstructure:"custom_separator"`
+	CustomSeparatorValue string      `yaml:"separator" mapstructure:"separator"`
+	HideInShortMode      bool        `yaml:"short_mode_hidden" mapstructure:"short_mode_hidden"`
+	Spec                 interface{} `yaml:"spec" mapstructure:"spec"`
+}
+
+type ComponentInstance struct {
+	ComponentConfiguration *Component
+	Component              BarComponent
+	Identifier             string
+}
+
+type ComponentInstances []*ComponentInstance
+type Components []Component

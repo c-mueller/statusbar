@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package statusbarlib
 
-import "fmt"
-
-func (i *instantiatedComponents) renderComponents() (string, string, error) {
+func (i *ComponentInstances) RenderComponentsAsString() (string, string, error) {
 	longString, shortString := "", ""
 	for idx, v := range *i {
-		l, s, err := renderComponent(idx, i, v)
+		l, s, err := RenderComponentAsString(idx, i, v)
 		if err != nil {
 			return "", "", err
 		}
@@ -32,39 +30,32 @@ func (i *instantiatedComponents) renderComponents() (string, string, error) {
 	return longString, shortString, nil
 }
 
-func renderComponent(index int, components *instantiatedComponents, component *componentInstance) (string, string, error) {
+func RenderComponentAsString(index int, components *ComponentInstances, component *ComponentInstance) (string, string, error) {
 	shortString := ""
 	longString := ""
 
-	r, err := component.component.Render()
+	r, err := component.Component.Render()
 	if err != nil {
 		return "", "", err
 	}
-	if !component.config.HideInShortMode {
-		shortString = getResultString(r.ShortText, index, components, component)
+	if !component.ComponentConfiguration.HideInShortMode {
+		shortString = AppendSeparator(r.ShortText, index, components, component)
 	}
 
-	longString = getResultString(r.LongText, index, components, component)
+	longString = AppendSeparator(r.LongText, index, components, component)
 
 	return longString, shortString, nil
 }
 
-func getResultString(r string, i int, components *instantiatedComponents, v *componentInstance) string {
+func AppendSeparator(r string, i int, components *ComponentInstances, v *ComponentInstance) string {
 	renderString := r
 
 	if i < len(*components)-1 {
-		if v.config.CustomSeparator {
-			renderString += v.config.CustomSeparatorValue
+		if v.ComponentConfiguration.CustomSeparator {
+			renderString += v.ComponentConfiguration.CustomSeparatorValue
 		} else {
 			renderString += DefaultSeparator
 		}
 	}
 	return renderString
-}
-
-func writeBlanksOnLine(count int) {
-	fmt.Printf("\r")
-	for i := 0; i < count; i++ {
-		fmt.Printf(" ")
-	}
 }

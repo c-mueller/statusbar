@@ -23,7 +23,7 @@ import (
 
 var LoadBarBuilder = LoadBarComponentBuilder{}
 
-func (c *LoadBarComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
+func (c *LoadBarComponentBuilder) BuildComponent(identifier string, i interface{}, builders []statusbarlib.ComponentBuilder) (statusbarlib.BarComponent, error) {
 	cfg := &LoadBarConfiguration{}
 	if i == nil {
 		cfg = &DefaultLoadBarConfig

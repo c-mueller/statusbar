@@ -18,6 +18,7 @@ package bar
 
 import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/c-mueller/statusbar/components/block"
 	"github.com/c-mueller/statusbar/components/clock"
 	"github.com/c-mueller/statusbar/components/command"
 	"github.com/c-mueller/statusbar/components/cpu"
@@ -27,12 +28,13 @@ import (
 	"github.com/c-mueller/statusbar/components/net"
 	"github.com/c-mueller/statusbar/components/text"
 	"github.com/c-mueller/statusbar/components/uptime"
+	"github.com/c-mueller/statusbar/rendering/i3"
+	"github.com/c-mueller/statusbar/rendering/terminal"
 )
 
-const DefaultSeparator = " | "
 const statusbarRootContext = "statusbar_root"
 
-var builders = []statusbarlib.ComponentBuilder{
+var ComponentBuilders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&cpu.LoadBarBuilder),
 	statusbarlib.ComponentBuilder(&cpu.ChartBuilder),
 	statusbarlib.ComponentBuilder(&text.Builder),
@@ -42,13 +44,13 @@ var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&mem.Builder),
 	statusbarlib.ComponentBuilder(&uptime.Builder),
 	statusbarlib.ComponentBuilder(&net.Builder),
-	statusbarlib.ComponentBuilder(&BlockBuilderInstance),
+	statusbarlib.ComponentBuilder(&block.BlockBuilderInstance),
 	statusbarlib.ComponentBuilder(&command.Builder),
 }
 
-var renderHandlers = []RenderHandler{
-	NewTerminalRenderer(false),
-	NewTerminalRenderer(true),
-	&I3SingleBlockRenderer{},
-	&I3MultiBlockRenderer{},
+var RenderHandlers = []statusbarlib.RenderHandler{
+	terminal.NewTerminalRenderer(false),
+	terminal.NewTerminalRenderer(true),
+	&i3.I3SingleBlockRenderer{},
+	&i3.I3MultiBlockRenderer{},
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package block
 
 import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
@@ -28,11 +28,11 @@ type BlockBuilder struct {
 
 type Block struct {
 	identifier string
-	children   instantiatedComponents
+	children   statusbarlib.ComponentInstances
 }
 
 type BlockConfig struct {
-	Components Components `yaml:"components" mapstructure:"components"`
+	Components statusbarlib.Components `yaml:"components" mapstructure:"components"`
 }
 
 func (b *Block) GetIdentifier() string {
@@ -40,11 +40,11 @@ func (b *Block) GetIdentifier() string {
 }
 
 func (b *Block) Init() error {
-	return b.children.init(b.identifier)
+	return b.children.InitializeComponents(b.identifier)
 }
 
 func (b *Block) Render() (*statusbarlib.RenderingOutput, error) {
-	l, s, err := b.children.renderComponents()
+	l, s, err := b.children.RenderComponentsAsString()
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +53,13 @@ func (b *Block) Render() (*statusbarlib.RenderingOutput, error) {
 }
 
 func (b *Block) Stop() error {
-	return b.children.stop()
+	return b.children.Stop()
 }
 
-func (b *BlockBuilder) BuildComponent(identifier string, data interface{}) (statusbarlib.BarComponent, error) {
+func (b *BlockBuilder) BuildComponent(identifier string, data interface{}, builders []statusbarlib.ComponentBuilder) (statusbarlib.BarComponent, error) {
 	block := Block{
 		identifier: identifier,
-		children:   make(instantiatedComponents, 0),
+		children:   make(statusbarlib.ComponentInstances, 0),
 	}
 
 	var childComponentConfig *BlockConfig
@@ -68,7 +68,7 @@ func (b *BlockBuilder) BuildComponent(identifier string, data interface{}) (stat
 		return nil, err
 	}
 
-	err = block.children.insertFromComponentList(&childComponentConfig.Components, identifier)
+	err = block.children.InsertFromComponentList(&childComponentConfig.Components, identifier, builders)
 	if err != nil {
 		return nil, err
 	}

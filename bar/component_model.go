@@ -22,29 +22,6 @@ import (
 )
 
 type StatusBar struct {
-	components      instantiatedComponents
+	Components      statusbarlib.ComponentInstances
 	RefreshInterval time.Duration
 }
-
-type Config struct {
-	RefreshInterval int        `yaml:"refresh_interval"`
-	Components      Components `yaml:"components"`
-}
-
-type Component struct {
-	Identifier           string      `yaml:"identifier" mapstructure:"identifier"`
-	Type                 string      `yaml:"type" mapstructure:"type"`
-	CustomSeparator      bool        `yaml:"custom_separator" mapstructure:"custom_separator"`
-	CustomSeparatorValue string      `yaml:"separator" mapstructure:"separator"`
-	HideInShortMode      bool        `yaml:"short_mode_hidden" mapstructure:"short_mode_hidden"`
-	Spec                 interface{} `yaml:"spec" mapstructure:"spec"`
-}
-
-type componentInstance struct {
-	config    *Component
-	component statusbarlib.BarComponent
-	id        string
-}
-
-type instantiatedComponents []*componentInstance
-type Components []Component

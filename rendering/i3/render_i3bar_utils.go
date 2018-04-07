@@ -14,16 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package i3
 
-type i3BarHeader struct {
-	Version     int  `json:"version"`
-	ClickEvents bool `json:"click_events"`
-}
+import (
+	"encoding/json"
+	"fmt"
+)
 
-type i3BarBlock struct {
-	Name      string `json:"name"`
-	Instance  string `json:"instance"`
-	FullText  string `json:"full_text"`
-	ShortText string `json:"short_text"`
+func writeI3BarHeader() {
+	header := i3BarHeader{
+		Version:     1,
+		ClickEvents: false,
+	}
+	data, _ := json.Marshal(header)
+	fmt.Println(string(data))
 }

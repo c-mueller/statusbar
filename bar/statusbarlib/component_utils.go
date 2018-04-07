@@ -14,44 +14,47 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package statusbarlib
 
 import (
 	"errors"
 	"fmt"
-	"github.com/c-mueller/statusbar/bar/statusbarlib"
 )
 
-func (i *instantiatedComponents) addComponent(component statusbarlib.BarComponent, config Component, context string) error {
-	err := i.checkIdentifierValidity(component.GetIdentifier())
+func (c *ComponentInstance) GetIdentifier() string {
+	return c.Component.GetIdentifier()
+}
+
+func (i *ComponentInstances) AddComponent(component BarComponent, config Component, context string) error {
+	err := i.CheckIdentifierValidity(component.GetIdentifier())
 	if err != nil {
 		return err
 	}
 
-	instance := componentInstance{
-		component: component,
-		id:        config.Identifier,
-		config:    &config,
+	instance := ComponentInstance{
+		Component:              component,
+		Identifier:             config.Identifier,
+		ComponentConfiguration: &config,
 	}
 
 	*i = append(*i, &instance)
 
-	log.Debugf("Block %q: Added component %q of type %q", context, config.Identifier, config.Type)
+	log.Debugf("Block %q: Added Component %q of type %q", context, config.Identifier, config.Type)
 
 	return nil
 }
 
-func (i *instantiatedComponents) insertFromComponentList(components *Components, context string) error {
+func (i *ComponentInstances) InsertFromComponentList(components *Components, context string, builders []ComponentBuilder) error {
 	for _, v := range *components {
 		componentFound := false
 		for _, builder := range builders {
 			if v.Type == builder.GetDescriptor() {
 				componentFound = true
-				component, err := builder.BuildComponent(v.Identifier, v.Spec)
+				component, err := builder.BuildComponent(v.Identifier, v.Spec, builders)
 				if err != nil {
 					return err
 				}
-				err = i.addComponent(component, v, context)
+				err = i.AddComponent(component, v, context)
 				if err != nil {
 					return err
 				}
@@ -67,10 +70,10 @@ func (i *instantiatedComponents) insertFromComponentList(components *Components,
 	return nil
 }
 
-func (i *instantiatedComponents) init(context string) error {
+func (i *ComponentInstances) InitializeComponents(context string) error {
 	for _, v := range *i {
-		log.Debugf("Block %q: Initializing component %q", context, v.config.Identifier)
-		err := v.component.Init()
+		log.Debugf("Block %q: Initializing Component %q", context, v.ComponentConfiguration.Identifier)
+		err := v.Component.Init()
 		if err != nil {
 			return err
 		}
@@ -78,9 +81,9 @@ func (i *instantiatedComponents) init(context string) error {
 	return nil
 }
 
-func (i *instantiatedComponents) stop() error {
+func (i *ComponentInstances) Stop() error {
 	for _, v := range *i {
-		err := v.component.Stop()
+		err := v.Component.Stop()
 		if err != nil {
 			return err
 		}
@@ -88,7 +91,7 @@ func (i *instantiatedComponents) stop() error {
 	return nil
 }
 
-func (i instantiatedComponents) checkIdentifierValidity(name string) error {
+func (i ComponentInstances) CheckIdentifierValidity(name string) error {
 	for _, v := range i {
 		if v.GetIdentifier() == name {
 			return errors.New(fmt.Sprintf("Invalid identifier name %q is already in use", v.GetIdentifier()))

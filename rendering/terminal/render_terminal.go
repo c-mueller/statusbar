@@ -14,12 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package terminal
 
 import (
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/op/go-logging"
 	"time"
 )
+
+var log = logging.MustGetLogger("terminal_renderer")
 
 const (
 	terminalRendererName             = "terminal"
@@ -48,16 +52,18 @@ func NewTerminalRenderer(short bool) *TerminalRenderer {
 	}
 }
 
-func (t *TerminalRenderer) Render(bar *StatusBar) error {
-	for _, v := range bar.components {
-		defer v.component.Stop()
+func (t *TerminalRenderer) Render(bar statusbarlib.StatusBar) error {
+	for _, v := range bar.GetComponents() {
+		defer v.Component.Stop()
 	}
 	oldLength := 0
 	for {
 		writeBlanksOnLine(oldLength)
 
+		components := bar.GetComponents()
+
 		// Print new Output
-		l, s, err := bar.components.renderComponents()
+		l, s, err := components.RenderComponentsAsString()
 		if err != nil {
 			return err
 		}
@@ -69,12 +75,12 @@ func (t *TerminalRenderer) Render(bar *StatusBar) error {
 
 		fmt.Printf("\r%s", r)
 		oldLength = len(r)
-		time.Sleep(bar.RefreshInterval)
+		time.Sleep(bar.GetRefreshInterval())
 	}
 	return nil
 }
 
-func (t *TerminalRenderer) Init(sb *StatusBar) error {
+func (t *TerminalRenderer) Init(sb statusbarlib.StatusBar) error {
 	log.Debug("Initializing terminal renderer")
 	return nil
 }
@@ -85,4 +91,11 @@ func (t *TerminalRenderer) GetName() string {
 
 func (t *TerminalRenderer) GetDescription() string {
 	return t.Description
+}
+
+func writeBlanksOnLine(count int) {
+	fmt.Printf("\r")
+	for i := 0; i < count; i++ {
+		fmt.Printf(" ")
+	}
 }

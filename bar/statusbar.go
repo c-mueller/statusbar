@@ -17,6 +17,7 @@
 package bar
 
 import (
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/op/go-logging"
 	"gopkg.in/yaml.v2"
 	"time"
@@ -27,12 +28,12 @@ var log = logging.MustGetLogger("bar")
 func BuildFromConfig(config []byte) (*StatusBar, error) {
 	log.Debug("Building 'statusbar'...")
 
-	var cfg *Config
+	var cfg *statusbarlib.Config
 	yaml.Unmarshal(config, &cfg)
 
 	sb := newStatusBar()
 
-	err := sb.components.insertFromComponentList(&cfg.Components, statusbarRootContext)
+	err := sb.Components.InsertFromComponentList(&cfg.Components, statusbarRootContext, ComponentBuilders)
 
 	if err != nil {
 		return nil, err
@@ -43,16 +44,24 @@ func BuildFromConfig(config []byte) (*StatusBar, error) {
 
 func newStatusBar() *StatusBar {
 	return &StatusBar{
-		components:      make(instantiatedComponents, 0),
+		Components:      make(statusbarlib.ComponentInstances, 0),
 		RefreshInterval: 500 * time.Millisecond,
 	}
 }
 
-func (bar *StatusBar) Init() error {
-	return bar.components.init(statusbarRootContext)
+func (bar *StatusBar) GetComponents() statusbarlib.ComponentInstances {
+	return bar.Components
 }
 
-func (bar *StatusBar) Render(renderer RenderHandler) error {
+func (bar *StatusBar) GetRefreshInterval() time.Duration {
+	return bar.RefreshInterval
+}
+
+func (bar *StatusBar) Init() error {
+	return bar.Components.InitializeComponents(statusbarRootContext)
+}
+
+func (bar *StatusBar) Render(renderer statusbarlib.RenderHandler) error {
 	err := renderer.Init(bar)
 	if err != nil {
 		return err

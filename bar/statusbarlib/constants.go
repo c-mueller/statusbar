@@ -14,11 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package bar
+package statusbarlib
 
-type RenderHandler interface {
-	Init(bar *StatusBar) error
-	Render(bar *StatusBar) error
-	GetName() string
-	GetDescription() string
-}
+import "github.com/op/go-logging"
+
+var log = logging.MustGetLogger("statusbarlib")
+
+const DefaultSeparator = " | "
