@@ -19,9 +19,32 @@ package block
 import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/mitchellh/mapstructure"
+	"github.com/c-mueller/statusbar/components/text"
+	"github.com/c-mueller/statusbar/components/clock"
 )
 
-var BlockBuilderInstance = BlockBuilder{}
+var Builder = BlockBuilder{}
+
+var DefaultConfig = BlockConfig{
+	Components: statusbarlib.Components{
+		{
+			Identifier:           "time_label",
+			Type:                 "Text",
+			CustomSeparator:      true,
+			CustomSeparatorValue: " ",
+			Spec: text.ComponentConfig{
+				Text: "TIME:",
+			},
+		},
+		{
+			Identifier: "time",
+			Type:       "Clock",
+			Spec: clock.Configuration{
+				Blink: true,
+			},
+		},
+	},
+}
 
 type BlockBuilder struct {
 }
@@ -81,5 +104,5 @@ func (b *BlockBuilder) GetDescriptor() string {
 }
 
 func (b *BlockBuilder) GetDefaultConfig() interface{} {
-	return nil
+	return DefaultConfig
 }

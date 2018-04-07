@@ -59,22 +59,32 @@ components:
       recent_count: 20
       global: true
       show_total: False
-  - identifier: player_info
-    type: Block
+  - identifier: music_wheel
+    type: Wheel
     spec:
-      components:
-        - identifier: plctl_artist
-          custom_separator: true
-          separator: " - "
-          type: Command
-          spec:
-            command: "playerctl metadata artist"
-            execution_interval: 1000
-        - identifier: plctl_title
-          type: Command
-          spec:
-            command: "playerctl metadata title"
-            execution_interval: 1000
+      width: 16
+      component:
+        identifier: player_info
+        type: Block
+        spec:
+          components:
+            - identifier: plctl_status
+              type: Command
+              spec:
+                command: "playerctl status"
+                execution_interval: 1000
+            - identifier: plctl_artist
+              custom_separator: true
+              separator: " - "
+              type: Command
+              spec:
+                command: "playerctl metadata artist"
+                execution_interval: 1000
+            - identifier: plctl_title
+              type: Command
+              spec:
+                command: "playerctl metadata title"
+                execution_interval: 1000
   - identifier: time_block
     type: Block
     spec:

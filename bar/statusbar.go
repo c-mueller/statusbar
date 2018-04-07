@@ -25,6 +25,11 @@ import (
 
 var log = logging.MustGetLogger("bar")
 
+type StatusBar struct {
+	Components      statusbarlib.ComponentInstances
+	RefreshInterval time.Duration
+}
+
 func BuildFromConfig(config []byte) (*StatusBar, error) {
 	log.Debug("Building 'statusbar'...")
 
@@ -32,6 +37,7 @@ func BuildFromConfig(config []byte) (*StatusBar, error) {
 	yaml.Unmarshal(config, &cfg)
 
 	sb := newStatusBar()
+	sb.RefreshInterval = time.Duration(cfg.RefreshInterval) * time.Millisecond
 
 	err := sb.Components.InsertFromComponentList(&cfg.Components, statusbarRootContext, ComponentBuilders)
 

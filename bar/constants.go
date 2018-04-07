@@ -30,6 +30,7 @@ import (
 	"github.com/c-mueller/statusbar/components/uptime"
 	"github.com/c-mueller/statusbar/rendering/i3"
 	"github.com/c-mueller/statusbar/rendering/terminal"
+	"github.com/c-mueller/statusbar/components/wheel"
 )
 
 const statusbarRootContext = "statusbar_root"
@@ -44,8 +45,9 @@ var ComponentBuilders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&mem.Builder),
 	statusbarlib.ComponentBuilder(&uptime.Builder),
 	statusbarlib.ComponentBuilder(&net.Builder),
-	statusbarlib.ComponentBuilder(&block.BlockBuilderInstance),
+	statusbarlib.ComponentBuilder(&block.Builder),
 	statusbarlib.ComponentBuilder(&command.Builder),
+	statusbarlib.ComponentBuilder(&wheel.Builder),
 }
 
 var RenderHandlers = []statusbarlib.RenderHandler{
