@@ -35,12 +35,6 @@
   version = "v1.1.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/gin-gonic/gin"
-  packages = ["json"]
-  revision = "5d3f30cfc81f9109850fa9043a19783cbbde68a5"
-
-[[projects]]
   name = "github.com/go-ole/go-ole"
   packages = [
     ".",
@@ -50,28 +44,10 @@
   version = "v1.2.1"
 
 [[projects]]
-  name = "github.com/json-iterator/go"
-  packages = ["."]
-  revision = "3353055b2a1a5ae1b6a8dfde887a524e7088f3a2"
-  version = "1.1.2"
-
-[[projects]]
   branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
-
-[[projects]]
-  name = "github.com/modern-go/concurrent"
-  packages = ["."]
-  revision = "938152ca6a933f501bb238954eebd3cbcbf489ff"
-  version = "1.0.2"
-
-[[projects]]
-  name = "github.com/modern-go/reflect2"
-  packages = ["."]
-  revision = "1df9eeb2bb81f327b96228865c5687bc2194af3f"
-  version = "1.0.0"
 
 [[projects]]
   name = "github.com/op/go-logging"
@@ -97,6 +73,12 @@
   ]
   revision = "c432be29ccce470088d07eea25b3ea7e68a8afbb"
   version = "v2.18.01"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/shirou/w32"
+  packages = ["."]
+  revision = "bb4de0191aa41b5507caa14b0650cdbddcd9280b"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -128,6 +110,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8aff049c09901e730915fb9b6307d14808f848ce379e0c8103c4df9b4aa68496"
+  inputs-digest = "5a69616e872112788bcadca8cc673a8d9c1c3469bb63552a6e801133418c48c7"
   solver-name = "gps-cdcl"
   solver-version = 1

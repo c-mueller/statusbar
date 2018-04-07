@@ -38,6 +38,7 @@ func TestParse_Invalid_UnknownType(t *testing.T) {
 	assert.NoError(t, err)
 
 	_, err = BuildFromConfig(content)
+
 	assert.Error(t, err)
 	assert.True(t, strings.Contains(err.Error(), "InvalidTestType"))
 }

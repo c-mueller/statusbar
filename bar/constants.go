@@ -19,6 +19,7 @@ package bar
 import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/c-mueller/statusbar/components/clock"
+	"github.com/c-mueller/statusbar/components/command"
 	"github.com/c-mueller/statusbar/components/cpu"
 	"github.com/c-mueller/statusbar/components/date"
 	"github.com/c-mueller/statusbar/components/hostname"
@@ -32,7 +33,8 @@ const DefaultSeparator = " | "
 const statusbarRootContext = "statusbar_root"
 
 var builders = []statusbarlib.ComponentBuilder{
-	statusbarlib.ComponentBuilder(&cpu.Builder),
+	statusbarlib.ComponentBuilder(&cpu.LoadBarBuilder),
+	statusbarlib.ComponentBuilder(&cpu.ChartBuilder),
 	statusbarlib.ComponentBuilder(&text.Builder),
 	statusbarlib.ComponentBuilder(&date.Builder),
 	statusbarlib.ComponentBuilder(&clock.Builder),
@@ -41,10 +43,12 @@ var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&uptime.Builder),
 	statusbarlib.ComponentBuilder(&net.Builder),
 	statusbarlib.ComponentBuilder(&BlockBuilderInstance),
+	statusbarlib.ComponentBuilder(&command.Builder),
 }
 
 var renderHandlers = []RenderHandler{
 	NewTerminalRenderer(false),
 	NewTerminalRenderer(true),
-	&I3BarRenderer{},
+	&I3SingleBlockRenderer{},
+	&I3MultiBlockRenderer{},
 }

@@ -16,50 +16,76 @@
 refresh_interval: 500
 components:
   - identifier: hostname
-    block_name: hostname
     type: Hostname
-  - identifier: uptime_label
-    type: Text
-    short_mode_hidden: true
-    custom_separator: true
-    separator: " "
+  - identifier: uptime_block
+    type: Block
     spec:
-      text: "UP:"
-  - identifier: uptime
-    type: Uptime
-  - identifier: cpu
-    type: CPU
+      components:
+        - identifier: uptime_label
+          type: Text
+          short_mode_hidden: true
+          custom_separator: true
+          separator: " "
+          spec:
+            text: "UP:"
+        - identifier: uptime
+          type: Uptime
+  - identifier: cpu_block
+    type: Block
     spec:
-      update_interval: 500
-      show_average_load: true
-      load_average_count: 240
+      components:
+        - identifier: cpu_message
+          type: Text
+          custom_separator: true
+          separator: " "
+          spec:
+            text: "CPU:"
+        - identifier: cpu
+          type: CPULoadBar
+          spec:
+            update_interval: 500
   - identifier: memory
     type: Memory
     spec:
       invert: true
-      show_swap: true
-      show_bytes: true
-  - identifier: lan
+      show_swap: false
+      show_bytes: false
+  - identifier: network
     type: Network
+    short_mode_hidden: false
     spec:
+      interface_name: eth0
       update_interval: 500
-      interface_name: enp35s0
-      global: false
-      recent_count: 10
-      show_total: true
-  - identifier: date_message
-    type: Text
-    short_mode_hidden: true
-    custom_separator: true
-    separator: " "
+      recent_count: 20
+      global: true
+      show_total: False
+  - identifier: player_info
+    type: Block
     spec:
-      text: "TIME:"
-  - identifier: date
-    short_mode_hidden: true
-    custom_separator: true
-    separator: " - "
-    type: Date
-  - identifier: clock
-    type: Clock
+      components:
+        - identifier: plctl_artist
+          custom_separator: true
+          separator: " - "
+          type: Command
+          spec:
+            command: "playerctl metadata artist"
+            execution_interval: 1000
+        - identifier: plctl_title
+          type: Command
+          spec:
+            command: "playerctl metadata title"
+            execution_interval: 1000
+  - identifier: time_block
+    type: Block
     spec:
-      blink: true
+      components:
+        - identifier: date_message
+          type: Text
+          custom_separator: true
+          separator: " "
+          spec:
+            text: "TIME:"
+        - identifier: clock
+          type: Clock
+          spec:
+            blink: true

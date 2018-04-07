@@ -21,14 +21,14 @@ pipeline:
   load_deps:
     image: golang:${GO_VERSION}
     commands:
+      # Install Fish shell
+      - apt-get update && apt-get install -y fish
       # Install Godep
       - go get -u github.com/golang/dep/cmd/dep
       # Install Dependencies
-      - dep ensure -v
-  build:
-    image: golang:${GO_VERSION}
-    commands:
-      - go build -v
+      - ./update_deps.fish
+      # Build application
+      - ./build.fish
   test_and_benchmark:
     image: golang:${GO_VERSION}
     commands:
@@ -40,6 +40,18 @@ pipeline:
     image: halive/git-cloc:latest
     commands:
       - cloc $(git ls-files)
+github_release:
+    image: plugins/github-release
+    secrets: [ github_token ]
+    files:
+      - statusbar
+    checksum:
+      - md5
+      - sha1
+      - sha256
+      - sha512
+    when:
+      event: tag
 
 matrix:
   GO_VERSION:

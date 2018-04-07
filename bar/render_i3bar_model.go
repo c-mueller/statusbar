@@ -14,39 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package cpu
+package bar
 
-import (
-	"github.com/c-mueller/statusbar/bar/statusbarlib"
-	"github.com/mitchellh/mapstructure"
-)
-
-var Builder = ComponentBuilder{}
-
-func (c *ComponentBuilder) BuildComponent(identifier string, i interface{}) (statusbarlib.BarComponent, error) {
-	cfg := &Configuration{}
-	if i == nil {
-		cfg = &DefaultConfig
-	} else {
-		var ic *Configuration
-		err := mapstructure.Decode(i, &ic)
-		if err != nil {
-			return nil, err
-		}
-		cfg = ic
-	}
-	component := &Component{
-		Config: cfg,
-		id:     identifier,
-	}
-
-	return statusbarlib.BarComponent(component), nil
+type i3BarHeader struct {
+	Version     int  `json:"version"`
+	ClickEvents bool `json:"click_events"`
 }
 
-func (c *ComponentBuilder) GetDescriptor() string {
-	return "CPU"
-}
-
-func (c *ComponentBuilder) GetDefaultConfig() interface{} {
-	return DefaultConfig
+type i3BarBlock struct {
+	Name      string `json:"name"`
+	Instance  string `json:"instance"`
+	FullText  string `json:"full_text"`
+	ShortText string `json:"short_text"`
 }

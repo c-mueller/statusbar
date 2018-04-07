@@ -16,29 +16,37 @@
 
 package cpu
 
-import "time"
-
-var DefaultConfig = Configuration{
-	UpdateInterval:   500,
-	ShowAverageLoad:  true,
-	LoadAverageCount: 240,
+var DefaultLoadBarConfig = LoadBarConfiguration{
+	UpdateInterval: 500,
 }
 
-type ComponentBuilder struct{}
-
-type Component struct {
-	Config          *Configuration
-	id              string
-	cpuUpdateTicker *time.Ticker
-	cpuLoads        []float64
-	currentValue    string
-	updateTimestamp time.Time
-	recentAverages  []float64
-	currentAverage  float64
+var DefaultAvgChartConfig = AvgChartConfig{
+	UpdateInterval: 5000,
+	Width:          30,
 }
 
-type Configuration struct {
-	UpdateInterval   int  `yaml:"update_interval" mapstructure:"update_interval"`
-	ShowAverageLoad  bool `yaml:"show_average_load" mapstructure:"show_average_load"`
-	LoadAverageCount int  `yaml:"load_average_count" mapstructure:"load_average_count"`
+type LoadBarComponentBuilder struct{}
+
+type LoadBarComponent struct {
+	Config        *LoadBarConfiguration
+	id            string
+	updateHandler *LoadMonitor
+}
+
+type LoadBarConfiguration struct {
+	UpdateInterval int `yaml:"update_interval" mapstructure:"update_interval"`
+}
+
+type AvgChartBuilder struct {
+}
+
+type AvgChartComponent struct {
+	id            string
+	updateHandler *LoadMonitor
+	Config        AvgChartConfig
+}
+
+type AvgChartConfig struct {
+	UpdateInterval int `yaml:"update_interval" mapstructure:"update_interval"`
+	Width          int `yaml:"width" mapstructure:"width"`
 }

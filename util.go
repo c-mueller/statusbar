@@ -32,7 +32,7 @@ var log = logging.MustGetLogger("sb_main")
 func exitOnErr(err error, code int, format string, values ...interface{}) {
 	if err != nil {
 		log.Errorf(format, values...)
-		log.Errorf("Error Message: %q", err.Error())
+		log.Errorf("Error message: %q", err.Error())
 		os.Exit(code)
 	}
 }
@@ -49,7 +49,7 @@ func initializeLogger() {
 		leveledBackend.SetLevel(logging.ERROR, "")
 	}
 	logging.SetBackend(leveledBackend)
-	log.Debug("Parsed Command Line arguments")
+	log.Debug("Parsed command line arguments")
 }
 
 func findRenderer(name string) bar.RenderHandler {

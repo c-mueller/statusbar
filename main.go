@@ -38,5 +38,7 @@ func main() {
 		printDefaultConfig()
 	case "renderer":
 		listRenderer()
+	case "version":
+		versionInfo()
 	}
 }

@@ -17,45 +17,15 @@
 package bar
 
 import (
-	"github.com/op/go-logging"
-	"gopkg.in/yaml.v2"
-	"time"
+	"encoding/json"
+	"fmt"
 )
 
-var log = logging.MustGetLogger("bar")
-
-func BuildFromConfig(config []byte) (*StatusBar, error) {
-	log.Debug("Building 'statusbar'...")
-
-	var cfg *Config
-	yaml.Unmarshal(config, &cfg)
-
-	sb := newStatusBar()
-
-	err := sb.components.insertFromComponentList(&cfg.Components, statusbarRootContext)
-
-	if err != nil {
-		return nil, err
+func writeI3BarHeader() {
+	header := i3BarHeader{
+		Version:     1,
+		ClickEvents: false,
 	}
-
-	return sb, nil
-}
-
-func newStatusBar() *StatusBar {
-	return &StatusBar{
-		components:      make(instantiatedComponents, 0),
-		RefreshInterval: 500 * time.Millisecond,
-	}
-}
-
-func (bar *StatusBar) Init() error {
-	return bar.components.init(statusbarRootContext)
-}
-
-func (bar *StatusBar) Render(renderer RenderHandler) error {
-	err := renderer.Init(bar)
-	if err != nil {
-		return err
-	}
-	return renderer.Render(bar)
+	data, _ := json.Marshal(header)
+	fmt.Println(string(data))
 }

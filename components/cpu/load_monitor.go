@@ -18,44 +18,44 @@ package cpu
 
 import (
 	"fmt"
-	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/c-mueller/statusbar/util/braillechart"
 	"github.com/shirou/gopsutil/cpu"
 	"runtime"
 	"time"
 )
 
-func (c *Component) Init() error {
+type LoadMonitor struct {
+	StoreAvg        bool
+	LoadAvgCount    int
+	UpdateInterval  int
+	cpuUpdateTicker *time.Ticker
+	cpuLoads        []float64
+	updateTimestamp time.Time
+	recentAverages  []float64
+	currentAverage  float64
+}
+
+func (c *LoadMonitor) init() error {
 	// Initialize Load Bar
 	c.cpuLoads = make([]float64, runtime.NumCPU())
-	c.recentAverages = make([]float64, c.Config.LoadAverageCount)
+	c.recentAverages = make([]float64, c.LoadAvgCount)
 	c.updateTimestamp = time.Now()
-	c.currentValue = c.composeString()
 
 	// Build Tickers
 	c.cpuUpdateTicker = time.NewTicker(c.getRefreshDuration())
 
 	// Start Goroutines
 	go c.cpuUpdateHandler()
-
 	return nil
 }
 
-func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
-	return &statusbarlib.RenderingOutput{LongText: c.currentValue, ShortText: c.currentValue}, nil
-}
-
-func (c *Component) Stop() error {
+func (c *LoadMonitor) stop() error {
 	c.cpuUpdateTicker.Stop()
 	return nil
 }
 
-func (c *Component) GetIdentifier() string {
-	return c.id
-}
-
-func (c *Component) composeString() string {
-	cpuLoads := "CPU: "
+func (c *LoadMonitor) getCPUBrailleLoadBars() string {
+	cpuLoads := ""
 	for i := 0; i < len(c.cpuLoads); i = i + 2 {
 		rightLoad := c.cpuLoads[i]
 		leftLoad := 0.0
@@ -69,15 +69,32 @@ func (c *Component) composeString() string {
 
 		cpuLoads += fmt.Sprintf("%c", chr)
 	}
-	if c.Config.ShowAverageLoad {
-		formatString := "%02d%%"
-
-		cpuLoads += fmt.Sprintf(" | AVG: %s", fmt.Sprintf(formatString, int(c.currentAverage)))
-	}
 	return cpuLoads
 }
 
-func (c *Component) cpuUpdateHandler() {
+func (c *LoadMonitor) getBrailleAverageLoadChart() string {
+	dataCount := len(c.recentAverages)
+
+	output := ""
+
+	for i := dataCount - 1; i >= 0; i = i - 2 {
+		left := c.recentAverages[i]
+		right := 0.0
+		if (i - 1) >= 0 {
+			right = c.recentAverages[i-1]
+		}
+
+		bc := braillechart.NewChartChar(left/100, right/100)
+
+		chr, _ := bc.ToBrailleChar().MapToBrailleChar()
+
+		output += fmt.Sprintf("%c", chr)
+	}
+
+	return output
+}
+
+func (c *LoadMonitor) cpuUpdateHandler() {
 	for range c.cpuUpdateTicker.C {
 		data, _ := cpu.Percent(0, true)
 		avg := 0.0
@@ -86,9 +103,9 @@ func (c *Component) cpuUpdateHandler() {
 			avg += v
 		}
 
-		if c.Config.ShowAverageLoad {
+		if c.StoreAvg {
 			avg = avg / float64(len(c.cpuLoads))
-			c.recentAverages = append([]float64{avg}, c.recentAverages[:c.Config.LoadAverageCount-1]...)
+			c.recentAverages = append([]float64{avg}, c.recentAverages[:c.LoadAvgCount-1]...)
 
 			currentAvg := 0.0
 			for _, v := range c.recentAverages {
@@ -99,10 +116,9 @@ func (c *Component) cpuUpdateHandler() {
 		}
 
 		c.updateTimestamp = time.Now()
-		c.currentValue = c.composeString()
 	}
 }
 
-func (c *Component) getRefreshDuration() time.Duration {
-	return time.Duration(c.Config.UpdateInterval) * time.Millisecond
+func (c *LoadMonitor) getRefreshDuration() time.Duration {
+	return time.Duration(c.UpdateInterval) * time.Millisecond
 }

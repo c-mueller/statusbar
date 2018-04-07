@@ -23,14 +23,14 @@ import (
 )
 
 const (
-	i3barSingleBlockRenderName        = "i3"
-	i3barSingleBlockRenderDescription = "Render the statusbar in i3bar mode (single block)"
+	i3barMultiBlockRenderName        = "i3mb"
+	i3barMultiBlockRenderDescription = "Render the statusbar in i3bar mode (multi block)"
 )
 
-type I3SingleBlockRenderer struct {
+type I3MultiBlockRenderer struct {
 }
 
-func (r *I3SingleBlockRenderer) Render(bar *StatusBar) error {
+func (r *I3MultiBlockRenderer) Render(bar *StatusBar) error {
 	for _, v := range bar.components {
 		defer v.component.Stop()
 	}
@@ -41,19 +41,25 @@ func (r *I3SingleBlockRenderer) Render(bar *StatusBar) error {
 		//Begin new Block
 		fmt.Print(",[")
 
-		longString, shortString, err := bar.components.renderComponents()
-		if err != nil {
-			return err
-		}
+		for idx, v := range bar.components {
 
-		block := i3BarBlock{
-			Name:      "block",
-			Instance:  "block",
-			FullText:  longString,
-			ShortText: shortString,
+			d, err := v.component.Render()
+			if err != nil {
+				return err
+			}
+
+			block := i3BarBlock{
+				Name:      v.id,
+				Instance:  v.id,
+				FullText:  d.LongText,
+				ShortText: d.ShortText,
+			}
+			obj, _ := json.Marshal(block)
+			fmt.Print(string(obj))
+			if idx != len(bar.components)-1 {
+				fmt.Print(", ")
+			}
 		}
-		obj, _ := json.Marshal(block)
-		fmt.Print(string(obj))
 
 		//"Flush" output
 		fmt.Println("]")
@@ -64,16 +70,16 @@ func (r *I3SingleBlockRenderer) Render(bar *StatusBar) error {
 	return nil
 }
 
-func (r *I3SingleBlockRenderer) Init(sb *StatusBar) error {
+func (r *I3MultiBlockRenderer) Init(sb *StatusBar) error {
 	log.Debug("Initializing i3wm renderer")
 	writeI3BarHeader()
 	return nil
 }
 
-func (r *I3SingleBlockRenderer) GetName() string {
-	return i3barSingleBlockRenderName
+func (r *I3MultiBlockRenderer) GetName() string {
+	return i3barMultiBlockRenderName
 }
 
-func (r *I3SingleBlockRenderer) GetDescription() string {
-	return i3barSingleBlockRenderDescription
+func (r *I3MultiBlockRenderer) GetDescription() string {
+	return i3barMultiBlockRenderDescription
 }

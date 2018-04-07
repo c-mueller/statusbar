@@ -24,10 +24,10 @@ import (
 )
 
 const (
-	configFileOpenErrorFormat   = "Opening Configuration at %q has failed with an error"
-	statusBarInitErrorFormat    = "Building the statusbar with the configuration at %q has failed with an error"
-	componentInitErrorFormat    = "Component Initialisation has failed!"
-	renderingFailureErrorFormat = "Rendering Failed"
+	configFileOpenErrorFormat   = "Opening configuration at %q has failed with an error"
+	statusBarInitErrorFormat    = "Building the 'statusbar' with the configuration at %q has failed with an error"
+	componentInitErrorFormat    = "Component initialisation has failed!"
+	renderingFailureErrorFormat = "Rendering failed"
 
 	renderingEngineNotFoundMessageFormat = "Renderer %q not found!"
 )
@@ -38,9 +38,9 @@ var (
 
 	// Statusbar Sub Command
 	runCommand = kingpin.Command("run",
-		"Run statusbar in default (single process) mode").Alias("r").Alias("show")
+		"Run 'statusbar' in default (single process) mode").Alias("r").Alias("show")
 	configPath = runCommand.Flag("config",
-		"The Path to the Configuration file").Default(defaultConfigPath).Short('c').ExistingFile()
+		"The path to the configuration file").Default(defaultConfigPath).Short('c').ExistingFile()
 	modeArg = runCommand.Arg("renderer",
 		"The name of the renderer (use 'statusbar renderer' to list all rendering engines)").Default("terminal").String()
 )
@@ -54,7 +54,7 @@ func runStatusBar() {
 		os.Exit(1)
 	}
 
-	log.Debugf("Reading Config from %q", *configPath)
+	log.Debugf("Reading config from %q", *configPath)
 	configFile, err := os.Open(*configPath)
 	exitOnErr(err, 1, configFileOpenErrorFormat, *configPath)
 
