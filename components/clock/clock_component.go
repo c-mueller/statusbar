@@ -73,13 +73,16 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
 	format := "%02d:%02d:%02d"
 	h, m, s := time.Now().Clock()
 	if (s%2) == 0 && c.Config.Blink {
 		format = "%02d %02d %02d"
 	}
-	return fmt.Sprintf(format, h, m, s), nil
+
+	outputString := fmt.Sprintf(format, h, m, s)
+
+	return &statusbarlib.RenderingOutput{LongText: outputString, ShortText: outputString}, nil
 }
 
 func (c *Component) Stop() error {

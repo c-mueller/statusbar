@@ -29,6 +29,7 @@ import (
 )
 
 const DefaultSeparator = " | "
+const statusbarRootContext = "statusbar_root"
 
 var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&cpu.Builder),
@@ -39,6 +40,7 @@ var builders = []statusbarlib.ComponentBuilder{
 	statusbarlib.ComponentBuilder(&mem.Builder),
 	statusbarlib.ComponentBuilder(&uptime.Builder),
 	statusbarlib.ComponentBuilder(&net.Builder),
+	statusbarlib.ComponentBuilder(&BlockBuilderInstance),
 }
 
 var renderHandlers = []RenderHandler{

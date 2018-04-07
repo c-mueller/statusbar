@@ -86,7 +86,7 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
 	avg := c.collector.RecentMeasurements.ComputeAverage().ToSpeedPerSecond(c.Config.UpdateInterval)
 
 	outputString := avg.FormatToString()
@@ -95,7 +95,7 @@ func (c *Component) Render() (string, error) {
 		outputString += fmt.Sprintf(" (%s)", c.collector.LastMeasurement.FormatToString())
 	}
 
-	return outputString, nil
+	return &statusbarlib.RenderingOutput{LongText: outputString, ShortText: outputString}, nil
 }
 
 func (c *Component) Stop() error {

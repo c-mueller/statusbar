@@ -16,6 +16,7 @@
 refresh_interval: 500
 components:
   - identifier: hostname
+    block_name: hostname
     type: Hostname
   - identifier: uptime_label
     type: Text

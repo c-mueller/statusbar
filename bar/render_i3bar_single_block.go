@@ -62,15 +62,9 @@ func (r *I3BarRenderer) Render(bar *StatusBar) error {
 		//Begin new Block
 		fmt.Print(",[")
 
-		longString := ""
-		shortString := ""
-		for i, v := range bar.components {
-			l, s, err := renderComponent(i, bar, v)
-			if err != nil {
-				return err
-			}
-			longString += l
-			shortString += s
+		longString, shortString, err := bar.components.renderComponents()
+		if err != nil {
+			return err
 		}
 
 		block := i3BarBlock{

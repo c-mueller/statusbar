@@ -16,15 +16,7 @@
 
 package statusbarlib
 
-type BarComponent interface {
-	GetIdentifier() string
-	Init() error
-	Render() (*RenderingOutput, error)
-	Stop() error
-}
-
-type ComponentBuilder interface {
-	BuildComponent(identifier string, data interface{}) (BarComponent, error)
-	GetDescriptor() string
-	GetDefaultConfig() interface{}
+type RenderingOutput struct {
+	LongText  string `json:"long_text" yaml:"long_text" mapstructure:"long_text"`
+	ShortText string `json:"short_text" yaml:"short_text" mapstructure:"short_text"`
 }

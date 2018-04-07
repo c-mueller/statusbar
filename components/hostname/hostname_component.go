@@ -51,16 +51,18 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	currentUser, err := user.Current()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return fmt.Sprintf("%s@%s", currentUser.Username, hostname), nil
+	outputString := fmt.Sprintf("%s@%s", currentUser.Username, hostname)
+
+	return &statusbarlib.RenderingOutput{LongText: outputString, ShortText: outputString}, nil
 }
 
 func (c *Component) Stop() error {

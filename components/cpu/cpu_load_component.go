@@ -18,6 +18,7 @@ package cpu
 
 import (
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/c-mueller/statusbar/util/braillechart"
 	"github.com/shirou/gopsutil/cpu"
 	"runtime"
@@ -40,8 +41,8 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
-	return c.currentValue, nil
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
+	return &statusbarlib.RenderingOutput{LongText: c.currentValue, ShortText: c.currentValue}, nil
 }
 
 func (c *Component) Stop() error {

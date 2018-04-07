@@ -57,20 +57,14 @@ func (t *TerminalRenderer) Render(bar *StatusBar) error {
 		writeBlanksOnLine(oldLength)
 
 		// Print new Output
-		longString := ""
-		shortString := ""
-		for i, v := range bar.components {
-			l, s, err := renderComponent(i, bar, v)
-			if err != nil {
-				return err
-			}
-			longString += l
-			shortString += s
+		l, s, err := bar.components.renderComponents()
+		if err != nil {
+			return err
 		}
 
-		r := longString
+		r := l
 		if t.ShortMode {
-			r = shortString
+			r = s
 		}
 
 		fmt.Printf("\r%s", r)

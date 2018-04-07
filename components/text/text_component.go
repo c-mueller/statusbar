@@ -71,8 +71,8 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
-	return c.Config.Text, nil
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
+	return &statusbarlib.RenderingOutput{LongText: c.Config.Text, ShortText: c.Config.Text}, nil
 }
 
 func (c *Component) Stop() error {

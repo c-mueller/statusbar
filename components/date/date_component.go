@@ -49,9 +49,11 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
 	y, m, d := time.Now().Date()
-	return fmt.Sprintf("%02d.%02d.%04d", d, int(m), y), nil
+
+	outputString := fmt.Sprintf("%02d.%02d.%04d", d, int(m), y)
+	return &statusbarlib.RenderingOutput{LongText: outputString, ShortText: outputString}, nil
 }
 
 func (c *Component) Stop() error {

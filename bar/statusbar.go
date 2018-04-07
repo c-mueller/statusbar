@@ -17,8 +17,6 @@
 package bar
 
 import (
-	"errors"
-	"fmt"
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/op/go-logging"
 	"gopkg.in/yaml.v2"
@@ -30,71 +28,29 @@ var log = logging.MustGetLogger("sb_builder")
 func BuildFromConfig(config []byte) (*StatusBar, error) {
 	log.Debug("Building Statusbar...")
 
-	var cfg *StatusBarConfig
+	var cfg *Config
 	yaml.Unmarshal(config, &cfg)
 
 	sb := newStatusBar()
 
-	for _, v := range cfg.Components {
-		componentFound := false
-		for _, builder := range builders {
-			if v.Type == builder.GetDescriptor() {
-				componentFound = true
-				component, err := builder.BuildComponent(v.Identifier, v.Spec)
-				if err != nil {
-					return nil, err
-				}
-				err = sb.addComponent(component, v)
-				if err != nil {
-					return nil, err
-				}
-			}
-		}
-		if !componentFound {
-			return nil, errors.New(fmt.Sprintf("No Component of type %q found", v.Type))
-		}
-	}
-
-	log.Debugf("Added %d components", len(sb.components))
+	sb.components.insertFromComponentList(&cfg.Components, statusbarRootContext)
 
 	return sb, nil
 }
 
 func newStatusBar() *StatusBar {
 	return &StatusBar{
-		components:      make([]*componentInstance, 0),
+		components:      make(instantiatedComponents, 0),
 		RefreshInterval: 500 * time.Millisecond,
 	}
 }
 
-func (bar *StatusBar) addComponent(component statusbarlib.BarComponent, config StatusBarComponentConfig) error {
-	log.Debugf("Adding component %q of type %q", config.Identifier, config.Type)
-	for _, v := range bar.components {
-		if v.GetIdentifier() == config.Identifier {
-			return errors.New(fmt.Sprintf("Invalid identifier name %q is already in use", component.GetIdentifier()))
-		}
-	}
-
-	instance := componentInstance{
-		component: component,
-		id:        config.Identifier,
-		config:    &config,
-	}
-
-	bar.components = append(bar.components, &instance)
-
-	return nil
+func (bar *StatusBar) addComponent(component statusbarlib.BarComponent, config Component) error {
+	return bar.components.addComponent(component, config, statusbarRootContext)
 }
 
 func (bar *StatusBar) Init() error {
-	for _, v := range bar.components {
-		log.Debugf("Initializing component %q", v.config.Identifier)
-		err := v.component.Init()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return bar.components.init(statusbarRootContext)
 }
 
 func (bar *StatusBar) RenderTerminal(short bool) error {

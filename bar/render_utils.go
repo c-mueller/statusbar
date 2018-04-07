@@ -18,7 +18,21 @@ package bar
 
 import "fmt"
 
-func renderComponent(index int, bar *StatusBar, component *componentInstance) (string, string, error) {
+func (i *instantiatedComponents) renderComponents() (string, string, error) {
+	longString, shortString := "", ""
+	for idx, v := range *i {
+		l, s, err := renderComponent(idx, i, v)
+		if err != nil {
+			return "", "", err
+		}
+		longString += l
+		shortString += s
+	}
+
+	return longString, shortString, nil
+}
+
+func renderComponent(index int, components *instantiatedComponents, component *componentInstance) (string, string, error) {
 	shortString := ""
 	longString := ""
 
@@ -27,17 +41,18 @@ func renderComponent(index int, bar *StatusBar, component *componentInstance) (s
 		return "", "", err
 	}
 	if !component.config.HideInShortMode {
-		shortString = getResultString(r, index, bar, component)
+		shortString = getResultString(r.ShortText, index, components, component)
 	}
 
-	longString = getResultString(r, index, bar, component)
+	longString = getResultString(r.LongText, index, components, component)
 
 	return longString, shortString, nil
 }
 
-func getResultString(r string, i int, bar *StatusBar, v *componentInstance) string {
+func getResultString(r string, i int, components *instantiatedComponents, v *componentInstance) string {
 	renderString := r
-	if i < len(bar.components)-1 {
+
+	if i < len(*components)-1 {
 		if v.config.CustomSeparator {
 			renderString += v.config.CustomSeparatorValue
 		} else {

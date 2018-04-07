@@ -19,6 +19,7 @@ package mem
 import (
 	"code.cloudfoundry.org/bytefmt"
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/c-mueller/statusbar/util"
 	"github.com/shirou/gopsutil/mem"
 	"strings"
@@ -28,13 +29,13 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
 	outputString := c.renderMemoryPercentage("MEM: ", getAvailableMemoryPercentage)
 
 	if c.Config.ShowSwap {
 		outputString += c.renderMemoryPercentage("| SWP: ", getSwapMemoryPercentage)
 	}
-	return outputString, nil
+	return &statusbarlib.RenderingOutput{LongText: outputString, ShortText: outputString}, nil
 }
 
 func (c *Component) Stop() error {

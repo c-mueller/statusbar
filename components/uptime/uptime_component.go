@@ -51,12 +51,15 @@ func (c *Component) Init() error {
 	return nil
 }
 
-func (c *Component) Render() (string, error) {
+func (c *Component) Render() (*statusbarlib.RenderingOutput, error) {
 	ut, err := getUptimeDuration()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return formatDuration(ut), nil
+
+	outputString := formatDuration(ut)
+
+	return &statusbarlib.RenderingOutput{LongText: outputString, ShortText: outputString}, nil
 }
 
 func (c *Component) Stop() error {

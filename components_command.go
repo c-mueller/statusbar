@@ -55,7 +55,7 @@ func printDefaultConfig() {
 				yamlConfig, err = yaml.Marshal(config)
 
 			} else {
-				wrappedConfig := bar.StatusBarComponentConfig{
+				wrappedConfig := bar.Component{
 					Identifier:           "my-identifier",
 					Type:                 v.GetDescriptor(),
 					CustomSeparator:      false,
