@@ -18,7 +18,7 @@ workspace:
   path: src/github.com/c-mueller/statusbar
 
 pipeline:
-  load_deps:
+  fetch_deps_and_build:
     image: golang:${GO_VERSION}
     commands:
       # Install Fish shell
@@ -34,9 +34,10 @@ pipeline:
     commands:
       - go test -race -coverprofile=profile.out -covermode=atomic -v -cover -bench=. -benchtime=10s ./...
   application_version_info:
-    image: alpine:3.7
+    image: ubuntu:16.04
     commands:
-      - ./statusbar version
+      - cp statusbar /usr/bin/
+      - statusbar version
   cloc_report:
     image: halive/git-cloc:latest
     commands:
