@@ -17,11 +17,11 @@
 package wheel
 
 import (
-	"github.com/c-mueller/statusbar/bar/statusbarlib"
-	"github.com/mitchellh/mapstructure"
 	"errors"
-	"github.com/c-mueller/statusbar/components/text"
 	"fmt"
+	"github.com/c-mueller/statusbar/bar/statusbarlib"
+	"github.com/c-mueller/statusbar/components/text"
+	"github.com/mitchellh/mapstructure"
 )
 
 var Builder = BuilderStruct{}
@@ -68,7 +68,7 @@ func (b *Wheel) Render() (*statusbarlib.RenderingOutput, error) {
 		return nil, err
 	}
 
-	if len(l) != len(b.lastString) || b.idx > len(l) {
+	if len(l) != len(b.lastString) || len(l) <= b.config.Width || b.idx > len(l)+3 {
 		b.idx = 0
 		b.lastString = l
 	}
@@ -81,7 +81,7 @@ func (b *Wheel) Render() (*statusbarlib.RenderingOutput, error) {
 		left, right := b.idx, b.idx+b.config.Width
 
 		if right >= len(l) {
-			result = string(runes[left:]) + string(runes[:(right % len(l))])
+			result = string(runes[left:]) + string(runes[:(right%len(l))])
 		} else {
 			result = string(runes[left:right])
 		}

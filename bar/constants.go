@@ -28,14 +28,14 @@ import (
 	"github.com/c-mueller/statusbar/components/net"
 	"github.com/c-mueller/statusbar/components/text"
 	"github.com/c-mueller/statusbar/components/uptime"
+	"github.com/c-mueller/statusbar/components/wheel"
 	"github.com/c-mueller/statusbar/rendering/i3"
 	"github.com/c-mueller/statusbar/rendering/terminal"
-	"github.com/c-mueller/statusbar/components/wheel"
 )
 
 const statusbarRootContext = "statusbar_root"
 
-var ComponentBuilders = []statusbarlib.ComponentBuilder{
+var ComponentBuilders = statusbarlib.ComponentBuilders{
 	statusbarlib.ComponentBuilder(&cpu.LoadBarBuilder),
 	statusbarlib.ComponentBuilder(&cpu.ChartBuilder),
 	statusbarlib.ComponentBuilder(&text.Builder),

@@ -18,7 +18,7 @@ package bar
 
 import "github.com/c-mueller/statusbar/bar/statusbarlib"
 
-func GetComponents() []statusbarlib.ComponentBuilder {
+func GetComponents() statusbarlib.ComponentBuilders {
 	return ComponentBuilders
 }
 

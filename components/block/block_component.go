@@ -18,9 +18,9 @@ package block
 
 import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
-	"github.com/mitchellh/mapstructure"
-	"github.com/c-mueller/statusbar/components/text"
 	"github.com/c-mueller/statusbar/components/clock"
+	"github.com/c-mueller/statusbar/components/text"
+	"github.com/mitchellh/mapstructure"
 )
 
 var Builder = BlockBuilder{}

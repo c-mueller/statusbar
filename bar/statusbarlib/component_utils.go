@@ -19,7 +19,27 @@ package statusbarlib
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
+
+type ComponentBuilders []ComponentBuilder
+
+func (c ComponentBuilders) Less(a, b int) bool {
+	aString := strings.ToLower(c[a].GetDescriptor())
+	bString := strings.ToLower(c[b].GetDescriptor())
+
+	val := strings.Compare(aString, bString)
+
+	return val == -1
+}
+
+func (c ComponentBuilders) Len() int {
+	return len(c)
+}
+
+func (c ComponentBuilders) Swap(a, b int) {
+	c[a], c[b] = c[b], c[a]
+}
 
 func (c *ComponentInstance) GetIdentifier() string {
 	return c.Component.GetIdentifier()

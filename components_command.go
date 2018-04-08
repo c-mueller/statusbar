@@ -23,6 +23,7 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 	"gopkg.in/yaml.v2"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -79,6 +80,7 @@ func printDefaultConfig() {
 
 func listComponents() {
 	components := bar.GetComponents()
+	sort.Sort(components)
 	fmt.Printf("Found %d Components:\n", len(components))
 	for _, v := range components {
 		fmt.Printf(" - %s\n", v.GetDescriptor())

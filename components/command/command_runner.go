@@ -66,7 +66,7 @@ func (c *CommandRunner) runCommand() {
 	if err != nil {
 		if c.ErrorMessage != "" {
 			c.lastValue = c.ErrorMessage
-		} else  {
+		} else {
 			c.lastValue = err.Error()
 		}
 		return

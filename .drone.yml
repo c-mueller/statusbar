@@ -33,14 +33,15 @@ pipeline:
     image: golang:${GO_VERSION}
     commands:
       - go test -race -coverprofile=profile.out -covermode=atomic -v -cover -bench=. -benchtime=10s ./...
-  codecov_report:
-    image: robertstettner/drone-codecov
-    secrets: [ codecov_token ]
+  application_version_info:
+    image: alpine:3.7
+    commands:
+      - ./statusbar version
   cloc_report:
     image: halive/git-cloc:latest
     commands:
       - cloc $(git ls-files)
-github_release:
+  github_release:
     image: plugins/github-release
     secrets: [ github_token ]
     files:
