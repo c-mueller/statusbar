@@ -1,0 +1,20 @@
+site_name: statusbar
+theme:
+  name: 'material'
+  primary: 'grey'
+  accent: 'yellow'
+  logo:
+    icon: 'widgets'
+repo_name: 'c-mueller/statusbar'
+repo_url: 'https://github.com/c-mueller/statusbar'
+copyright: 'Copyright &copy; 2018 Christian Müller'
+strict: true
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/c-mueller/statusbar'
+pages:
+    - Home: 'index.md'
+    - Installing statusbar: 'install.md'
+    - Configuring statusbar: 'config.md'
+    - Development guide: 'development.md'

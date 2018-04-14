@@ -68,7 +68,7 @@ func (b *Wheel) Render() (*statusbarlib.RenderingOutput, error) {
 		return nil, err
 	}
 
-	if len(l) != len(b.lastString) || len(l) <= b.config.Width || b.idx > len(l)+3 {
+	if len(l) != len(b.lastString) || len(l) <= b.config.Width || b.idx >= len(l)+3 {
 		b.idx = 0
 		b.lastString = l
 	}
