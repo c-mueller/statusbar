@@ -81,7 +81,7 @@ func (b *Wheel) Render() (*statusbarlib.RenderingOutput, error) {
 		left, right := b.idx, b.idx+b.config.Width
 
 		if right >= len(l) {
-			result = string(runes[left:]) + string(runes[:(right%len(l))])
+			result = string(runes[(left%len(runes)):]) + string(runes[:(right%len(runes))])
 		} else {
 			result = string(runes[left:right])
 		}
