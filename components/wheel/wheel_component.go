@@ -22,6 +22,7 @@ import (
 	"github.com/c-mueller/statusbar/bar/statusbarlib"
 	"github.com/c-mueller/statusbar/components/text"
 	"github.com/mitchellh/mapstructure"
+	"unicode/utf8"
 )
 
 var Builder = BuilderStruct{}
@@ -68,19 +69,21 @@ func (b *Wheel) Render() (*statusbarlib.RenderingOutput, error) {
 		return nil, err
 	}
 
-	if len(l) != len(b.lastString) || len(l) <= b.config.Width || b.idx >= len(l)+3 {
+	runeCount := utf8.RuneCountInString(l)
+
+	if len(l) != len(b.lastString) || runeCount <= b.config.Width || b.idx >= runeCount+3 {
 		b.idx = 0
 		b.lastString = l
 	}
 
 	result := ""
 
-	if len(l) > b.config.Width {
+	if utf8.RuneCountInString(l) > b.config.Width {
 		l = l + " | "
 		runes := []rune(l)
 		left, right := b.idx, b.idx+b.config.Width
 
-		if right >= len(l) {
+		if right >= len(runes) {
 			result = string(runes[(left%len(runes)):]) + string(runes[:(right%len(runes))])
 		} else {
 			result = string(runes[left:right])

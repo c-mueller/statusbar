@@ -24,11 +24,59 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 	"testing"
+	"unicode/utf8"
 )
+
+func TestWheelLength_SpecialChars(t *testing.T) {
+	testWheelLength(t, wheelOverflowTestTextConfig)
+}
+
+func TestWheelLength_RegularChars(t *testing.T) {
+	testWheelLength(t, wheelIndexTestComponentDefinition)
+}
+
+func testWheelLength(t *testing.T, wc WheelConfig) {
+	data, err := yaml.Marshal(wc)
+	assert.NoError(t, err)
+	fmt.Println(string(data))
+	var parsedData interface{}
+	err = yaml.Unmarshal(data, &parsedData)
+	assert.NoError(t, err)
+	component, err := Builder.BuildComponent("test", parsedData, wheelTestComponents)
+	assert.NoError(t, err)
+	assert.NoError(t, component.Init())
+	for i := 0; i < len(wheelOverflowTestText)+10; i++ {
+		output, err := component.Render()
+		assert.NoError(t, err)
+
+		assert.Equal(t, 10, utf8.RuneCountInString(output.LongText), fmt.Sprintf("Text: %q", output.LongText))
+	}
+}
+
+const wheelOverflowTestText = "Playing | Brothers of Metal - Prophecy of Ragnarök"
 
 var wheelTestComponents = statusbarlib.ComponentBuilders{
 	statusbarlib.ComponentBuilder(&block.Builder),
 	statusbarlib.ComponentBuilder(&text.Builder),
+}
+
+var wheelOverflowTestTextConfig = WheelConfig{
+	Width: 10,
+	Component: &statusbarlib.Component{
+		Identifier: "test_block",
+		Type:       "Block",
+		Spec: block.BlockConfig{
+			Components: statusbarlib.Components{
+				statusbarlib.Component{
+					Identifier: "test1",
+					Type:       "Text",
+					Spec: text.ComponentConfig{
+						Text: wheelOverflowTestText,
+					},
+				},
+			},
+		},
+	},
 }
 
 var wheelIndexTestComponentDefinition = WheelConfig{
@@ -97,30 +145,4 @@ var wheelIndexTestComponentDefinition = WheelConfig{
 			},
 		},
 	},
-}
-
-func TestWheelLength(t *testing.T) {
-
-	data, err := yaml.Marshal(wheelIndexTestComponentDefinition)
-	assert.NoError(t, err)
-
-	fmt.Println(string(data))
-
-	var parsedData interface{}
-	err = yaml.Unmarshal(data, &parsedData)
-	assert.NoError(t, err)
-
-	component, err := Builder.BuildComponent("test", parsedData, wheelTestComponents)
-	assert.NoError(t, err)
-	assert.NoError(t, component.Init())
-
-	for i := 0; i < 2*8*14+1; i++ {
-		output, err := component.Render()
-		assert.NoError(t, err)
-
-		fmt.Printf("Iteration: #%d\nLong: %s\nShort: %s\n\n", i, output.LongText, output.ShortText)
-
-		assert.Equal(t, 10, len(output.LongText))
-		assert.Equal(t, 10, len(output.ShortText))
-	}
 }
