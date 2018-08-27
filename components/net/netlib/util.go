@@ -61,7 +61,7 @@ func (a *NetworkThroughput) ToSpeedPerSecond(intervalMs int) *NetworkThroughput 
 
 func (a *NetworkThroughput) FormatToString() string {
 	// Format the String with '-' As padding '_' is used to define spaces in the result string
-	result := fmt.Sprintf("D:_%6s_U:_%6s", bytefmt.ByteSize(a.In), bytefmt.ByteSize(a.Out))
+	result := fmt.Sprintf("D:_%7s_U:_%7s", bytefmt.ByteSize(a.In), bytefmt.ByteSize(a.Out))
 	// Replace Spaces with '-' to get a output like --3.1G
 	result = strings.Replace(result, " ", "-", -1)
 	// Replace '_' with spaces to produce the end Result
